@@ -15,7 +15,7 @@
 2. Le libellé journal de l'écriture comptable
 	JournalLib, Alphanumérique ("Transactions")
 3. Le numéro sur une séquence continue de l'écriture comptable
-	EcritureNumm, Alphanumérique (LockNumber)
+	EcritureNumm, Alphanumérique (???)
 4. La date de comptabilisation de l'écriture comptable
 	EcritureDate, Date (JDate)
 5. Le numéro de compte, dont les trois premiers caractères doivent correspondre à des chiffres respectant les normes du plan comptable français

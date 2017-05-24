@@ -6,8 +6,8 @@ The development are made available with a permissive Apache 2.0 open source lice
 
 We welcome third party enhancements and contributions.
 
-Accounting plan
+## Accounting plan
 
-*[Banque nationale presentation](https://www.nbb.be/fr/centrale-des-bilans/etablir/modeles/modeles-pour-entreprises)
-*[Accounts numbers](http://www.ipcf.be/Uploads/Documents/doc_2376.pdf)
+* [Banque nationale presentation](https://www.nbb.be/fr/centrale-des-bilans/etablir/modeles/modeles-pour-entreprises)
+* [Accounts numbers](http://www.ipcf.be/Uploads/Documents/doc_2376.pdf)
 

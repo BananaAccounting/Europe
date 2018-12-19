@@ -12,40 +12,40 @@
 
 ## Champs
 1. Le code journal de l'écriture comptable
-	JournalCode, Alphanumérique  ("base")
+   - JournalCode, Alphanumérique  ("base")
 2. Le libellé journal de l'écriture comptable
-	JournalLib, Alphanumérique ("Transactions")
+   - JournalLib, Alphanumérique ("Transactions") ou ("Accounts) opening balance
 3. Le numéro sur une séquence continue de l'écriture comptable
-	EcritureNumm, Alphanumérique (???)
+   - EcritureNumm, Alphanumérique (Line Number)
 4. La date de comptabilisation de l'écriture comptable
-	EcritureDate, Date (JDate)
+   - EcritureDate, Date (JDate)
 5. Le numéro de compte, dont les trois premiers caractères doivent correspondre à des chiffres respectant les normes du plan comptable français
-	CompteNum, Alphanumérique (JAccount)
+   - CompteNum, Alphanumérique (JAccount)
 6. Le libellé de compte, conformément à la nomenclature du plan comptable français
-	CompteLib, Alphanumérique (Account Description from table account)
+   - CompteLib, Alphanumérique (Account Description from table account)
 7. Le numéro de compte auxiliaire (à blanc si non utilisé)
-	CompAuxNum, Alphanumérique  (blanc)
+   - CompAuxNum, Alphanumérique  (blanc)
 8. Le libellé de compte auxiliaire (à blanc si non utilisé)
-	CompAuxLib, Alphanumérique (blanc)
+   - CompAuxLib, Alphanumérique (blanc)
 9. La référence de la pièce justificative
-	PieceRef, Alphanumérique (Doc)
+   - PieceRef, Alphanumérique (Doc)
 10. La date de la pièce justificative
-	PieceDate, Date (DateOri)
+    - PieceDate, Date (DateOri)
 11. Le libellé de l'écriture comptable
-	EcritureLib, Alphanumérique (JDescription)
+    - EcritureLib, Alphanumérique (JDescription)
 12. Le montant au débit
-	Debit,Numérique  (JAmount if positive)
+    - Debit,Numérique  (JAmount if positive)
 13. Le montant au crédit
-	Credit, Numérique (abs(JAmount) if negative)
+    - Credit, Numérique (abs(JAmount) if negative)
 14. Le lettrage de l'écriture comptable (à blanc si non utilisé)
-	EcritureLet,Alphanumérique (blanc)
+    - EcritureLet,Alphanumérique (blanc)
 15. La date de lettrage (à blanc si non utilisé)
-	DateLet, Date (blanc)
+    - DateLet, Date (blanc)
 16. La date de validation de l'écriture comptable
-	ValidDate, Date (??)
+    - ValidDate, Date (??)
 17. Le montant en devise (à blanc si non utilisé)
-	Montantdevise, Numérique (JAmountTransactionCurrency)
+    - Montantdevise, Numérique (JAmountTransactionCurrency)
 18. L'identifiant de la devise (à blanc si non utilisé)
-	Idevise, Alphanumérique  (JTransactionCurrency)
+    - Idevise, Alphanumérique  (JTransactionCurrency)
 	
 	

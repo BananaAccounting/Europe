@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Desktop/__Desktop__/FEC_France/./test/ch.banana.fr.app.fecexporttxt.test.js}
+%%SCRIPT{/Users/ivan/Documents/GitHub/Europe/France/FEC/fectxtexport/./test/ch.banana.fr.app.fecexporttxt.test.js}
 %
 \begin{testcase}{TxtExportTest}
 \begin{test}{testBananaApps}

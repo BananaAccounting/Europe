@@ -1,3 +1,3 @@
 # Changelog
 
-2019-01-08; BananaApp per esportazione txt; Aggiunta nuova app per l'esportazione delle registrazioni in foramto txt ([vedi campi file](https://github.com/BananaAccounting/Europe/blob/master/France/FEC/README.md)).
+2019-01-08; BananaApp for txt export; Added a new BananaApp that exports the transactions to a txt file format.

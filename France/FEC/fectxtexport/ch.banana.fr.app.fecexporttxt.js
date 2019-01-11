@@ -109,7 +109,7 @@ function getDataType1(banDoc, startDate, endDate) {
 
             txtFile += 'base\t';
             txtFile += 'Transactions\t';
-            txtFile += tRow.value('JRowOrigin')+'\t';
+            txtFile += tRow.value('JContraAccountGroup')+'\t';
             txtFile += formatDate(Banana.Converter.toDate(tRow.value('JDate'))) +'\t';
             txtFile += tRow.value('JAccount') +'\t';
             txtFile += tRow.value('JAccountDescription') +'\t';

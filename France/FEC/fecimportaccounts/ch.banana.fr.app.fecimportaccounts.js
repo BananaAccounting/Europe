@@ -16,8 +16,8 @@
 // @api = 1.0
 // @pubdate = 2019-01-14
 // @publisher = Banana.ch SA
-// @description.en = Fichiers des écritures comptables (FEC) - Import Accounts
-// @description.fr = Fichiers des écritures comptables (FEC) - Importation des comptes
+// @description.en = Fichiers des écritures comptables (FEC) - Import Accounts (text file *.txt)
+// @description.fr = Fichiers des écritures comptables (FEC) - Importation des comptes (fichier de texte *.txt)
 // @doctype = *
 // @encoding = utf-8
 // @task = import.accounts

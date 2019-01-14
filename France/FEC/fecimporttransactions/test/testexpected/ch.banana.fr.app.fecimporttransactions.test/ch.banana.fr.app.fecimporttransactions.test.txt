@@ -1,0 +1,80 @@
+%%info_test_name{ch.banana.fr.app.fecimporttransactions.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Europe/France/FEC/fecimporttransactions/test/ch.banana.fr.app.fecimporttransactions.test.js}
+%
+\begin{testcase}{ImportTransactionsTest}
+\begin{test}{testBananaApps}
+\begin{tablevalue}{This is a csv value}{ l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l }
+JournalCode & JournalLib & EcritureNum & EcritureDate & CompteNum & CompteLib & CompAuxNum & CompAuxLib & PieceRef & PieceDate & EcritureLib & Debit & Credit & EcritureLet & DateLet & ValidDate & Montantdevise & Idevise\\
+base & Transactions & 3 & 20190105 & 615560 & Matériel de bureau &  &  & 1 & 20190105 & Achat matériel de bureau & 80.00 &  &  &  & 20190105 & 80.00 & EUR\\
+base & Transactions & 3 & 20190105 & 531100 & Caisse &  &  & 1 & 20190105 & Achat matériel de bureau &  & 80.00 &  &  & 20190105 & -80.00 & EUR\\
+base & Transactions & 4 & 20190106 & 531100 & Caisse &  &  & 2 & 20190106 & Vente au comptant & 8000.00 &  &  &  & 20190106 & 8000.00 & EUR\\
+base & Transactions & 4 & 20190106 & 701000 & Ventes de produits finis &  &  & 2 & 20190106 & Vente au comptant &  & 8000.00 &  &  & 20190106 & -8000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 512100 & Compte courant bancaire &  &  & 3 & 20190201 & Paiement loyer et charges locatives &  & 5000.00 &  &  & 20190201 & -5000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 613000 & Loyer &  &  & 3 & 20190201 & Loyer & 4000.00 &  &  &  & 20190201 & 4000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 614000 & Charges locatives et de copropriété &  &  & 3 & 20190201 & Charges locatives et de copropriété & 1000.00 &  &  &  & 20190201 & 1000.00 & EUR\\
+base & Transactions & 8 & 20190301 & 607000 & Achats de marchandises &  &  & 4 & 20190301 & Achats de marchandises & 600.00 &  &  &  & 20190301 & 600.00 & EUR\\
+base & Transactions & 8 & 20190301 & 512100 & Compte courant bancaire &  &  & 4 & 20190301 & Achats de marchandises &  & 600.00 &  &  & 20190301 & -600.00 & EUR\\
+base & Transactions & 9 & 20190402 & 514000 & Compte courant postal &  &  & 5 & 20190402 & Variation des stocks  & 200.00 &  &  &  & 20190402 & 200.00 & EUR\\
+base & Transactions & 9 & 20190402 & 713000 & Variation des stocks  &  &  & 5 & 20190402 & Variation des stocks  &  & 200.00 &  &  & 20190402 & -200.00 & EUR\\
+\end{tablevalue}
+\begin{tablevalue}{----TXT----}{ l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l }
+JournalCode & JournalLib & EcritureNum & EcritureDate & CompteNum & CompteLib & CompAuxNum & CompAuxLib & PieceRef & PieceDate & EcritureLib & Debit & Credit & EcritureLet & DateLet & ValidDate & Montantdevise & Idevise\\
+base & Transactions & 3 & 20190105 & 615560 & Matériel de bureau &  &  & 1 & 20190105 & Achat matériel de bureau & 80.00 &  &  &  & 20190105 & 80.00 & EUR\\
+base & Transactions & 3 & 20190105 & 531100 & Caisse &  &  & 1 & 20190105 & Achat matériel de bureau &  & 80.00 &  &  & 20190105 & -80.00 & EUR\\
+base & Transactions & 4 & 20190106 & 531100 & Caisse &  &  & 2 & 20190106 & Vente au comptant & 8000.00 &  &  &  & 20190106 & 8000.00 & EUR\\
+base & Transactions & 4 & 20190106 & 701000 & Ventes de produits finis &  &  & 2 & 20190106 & Vente au comptant &  & 8000.00 &  &  & 20190106 & -8000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 512100 & Compte courant bancaire &  &  & 3 & 20190201 & Paiement loyer et charges locatives &  & 5000.00 &  &  & 20190201 & -5000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 613000 & Loyer &  &  & 3 & 20190201 & Loyer & 4000.00 &  &  &  & 20190201 & 4000.00 & EUR\\
+base & Transactions & 5 & 20190201 & 614000 & Charges locatives et de copropriété &  &  & 3 & 20190201 & Charges locatives et de copropriété & 1000.00 &  &  &  & 20190201 & 1000.00 & EUR\\
+base & Transactions & 8 & 20190301 & 607000 & Achats de marchandises &  &  & 4 & 20190301 & Achats de marchandises & 600.00 &  &  &  & 20190301 & 600.00 & EUR\\
+base & Transactions & 8 & 20190301 & 512100 & Compte courant bancaire &  &  & 4 & 20190301 & Achats de marchandises &  & 600.00 &  &  & 20190301 & -600.00 & EUR\\
+base & Transactions & 9 & 20190402 & 514000 & Compte courant postal &  &  & 5 & 20190402 & Variation des stocks  & 200.00 &  &  &  & 20190402 & 200.00 & EUR\\
+base & Transactions & 9 & 20190402 & 713000 & Variation des stocks  &  &  & 5 & 20190402 & Variation des stocks  &  & 200.00 &  &  & 20190402 & -200.00 & EUR\\
+\\
+\end{tablevalue}
+\textvalue{----TXT TO ARRAY----}\\
+\textvalue{JournalCode,JournalLib,EcritureNum,EcritureDate,CompteNum,CompteLib,CompAuxNum,CompAuxLib,PieceRef,PieceDate,EcritureLib,Debit,Credit,EcritureLet,DateLet,ValidDate,Montantdevise,Idevise,base,Transactions,3,20190105,615560,Matériel de bureau,,,1,20190105,Achat matériel de bureau,80.00,,,,20190105,80.00,EUR,base,Transactions,3,20190105,531100,Caisse,,,1,20190105,Achat matériel de bureau,,80.00,,,20190105,-80.00,EUR,base,Transactions,4,20190106,531100,Caisse,,,2,20190106,Vente au comptant,8000.00,,,,20190106,8000.00,EUR,base,Transactions,4,20190106,701000,Ventes de produits finis,,,2,20190106,Vente au comptant,,8000.00,,,20190106,-8000.00,EUR,base,Transactions,5,20190201,512100,Compte courant bancaire,,,3,20190201,Paiement loyer et charges locatives,,5000.00,,,20190201,-5000.00,EUR,base,Transactions,5,20190201,613000,Loyer,,,3,20190201,Loyer,4000.00,,,,20190201,4000.00,EUR,base,Transactions,5,20190201,614000,Charges locatives et de copropriété,,,3,20190201,Charges locatives et de copropriété,1000.00,,,,20190201,1000.00,EUR,base,Transactions,8,20190301,607000,Achats de marchandises,,,4,20190301,Achats de marchandises,600.00,,,,20190301,600.00,EUR,base,Transactions,8,20190301,512100,Compte courant bancaire,,,4,20190301,Achats de marchandises,,600.00,,,20190301,-600.00,EUR,base,Transactions,9,20190402,514000,Compte courant postal,,,5,20190402,Variation des stocks ,200.00,,,,20190402,200.00,EUR,base,Transactions,9,20190402,713000,Variation des stocks ,,,5,20190402,Variation des stocks ,,200.00,,,20190402,-200.00,EUR}\\
+\textvalue{------TRANSACTIONS------}\\
+\textvalue{[["base","Transactions","3","20190105","615560","Matériel de bureau","","","1","20190105","Achat matériel de bureau","80.00","","","","20190105","80.00","EUR"],["base","Transactions","3","20190105","531100","Caisse","","","1","20190105","Achat matériel de bureau","","80.00","","","20190105","-80.00","EUR"]]}\\
+\textvalue{***}\\
+\textvalue{[["base","Transactions","4","20190106","531100","Caisse","","","2","20190106","Vente au comptant","8000.00","","","","20190106","8000.00","EUR"],["base","Transactions","4","20190106","701000","Ventes de produits finis","","","2","20190106","Vente au comptant","","8000.00","","","20190106","-8000.00","EUR"]]}\\
+\textvalue{***}\\
+\textvalue{[["base","Transactions","5","20190201","512100","Compte courant bancaire","","","3","20190201","Paiement loyer et charges locatives","","5000.00","","","20190201","-5000.00","EUR"],["base","Transactions","5","20190201","613000","Loyer","","","3","20190201","Loyer","4000.00","","","","20190201","4000.00","EUR"],["base","Transactions","5","20190201","614000","Charges locatives et de copropriété","","","3","20190201","Charges locatives et de copropriété","1000.00","","","","20190201","1000.00","EUR"]]}\\
+\textvalue{***}\\
+\textvalue{[["base","Transactions","8","20190301","607000","Achats de marchandises","","","4","20190301","Achats de marchandises","600.00","","","","20190301","600.00","EUR"],["base","Transactions","8","20190301","512100","Compte courant bancaire","","","4","20190301","Achats de marchandises","","600.00","","","20190301","-600.00","EUR"]]}\\
+\textvalue{***}\\
+\textvalue{[["base","Transactions","9","20190402","514000","Compte courant postal","","","5","20190402","Variation des stocks ","200.00","","","","20190402","200.00","EUR"],["base","Transactions","9","20190402","713000","Variation des stocks ","","","5","20190402","Variation des stocks ","","200.00","","","20190402","-200.00","EUR"]]}\\
+\textvalue{***}\\
+\textvalue{------IMPORT TRANSACTIONS FILE------}\\
+\textvalue{Date \textbackslash{t} Description \textbackslash{t} Account \textbackslash{t} ContraAccount \textbackslash{t} Income
+ewline 2019-01-05 \textbackslash{t} Achat matériel de bureau \textbackslash{t} 615560 \textbackslash{t} 531100 \textbackslash{t} 80.00
+ewline 2019-01-06 \textbackslash{t} Vente au comptant \textbackslash{t} 531100 \textbackslash{t} 701000 \textbackslash{t} 8000.00
+ewline 2019-02-01 \textbackslash{t} Paiement loyer et charges locatives \textbackslash{t}  \textbackslash{t} 512100 \textbackslash{t} 5000.00
+ewline 2019-02-01 \textbackslash{t} Loyer \textbackslash{t} 613000 \textbackslash{t}  \textbackslash{t} 4000.00
+ewline 2019-02-01 \textbackslash{t} Charges locatives et de copropriété \textbackslash{t} 614000 \textbackslash{t}  \textbackslash{t} 1000.00
+ewline 2019-03-01 \textbackslash{t} Achats de marchandises \textbackslash{t} 607000 \textbackslash{t} 512100 \textbackslash{t} 600.00
+ewline 2019-04-02 \textbackslash{t} Variation des stocks  \textbackslash{t} 514000 \textbackslash{t} 713000 \textbackslash{t} 200.00
+ewline }\\
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

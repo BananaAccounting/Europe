@@ -1,0 +1,13 @@
+{
+    "category": "productivity",
+    "country": "france",
+    "countryCode": "fr",
+    "description": "Importer dans la comptabilité",
+    "description.fr": "Importer dans la comptabilité",
+    "id": "ch.banana.fr.fecimport",
+    "language": "fr",
+    "publisher": "Banana.ch",
+    "title": "Importer dans la comptabilité",
+    "title.fr": "Importer dans la comptabilité",
+    "version": "1.0"
+}

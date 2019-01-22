@@ -14,10 +14,10 @@
 //
 // @id = ch.banana.fr.app.fecexporttxt.js
 // @api = 1.0
-// @pubdate = 2019-01-08
+// @pubdate = 2019-01-22
 // @publisher = Banana.ch SA
-// @description.en = Fichiers des écritures comptables (FEC) - Export to txt file
-// @description.fr = Fichiers des écritures comptables (FEC) - Exporter au fichier txt
+// @description = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
+// @description.fr = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
 // @doctype = *
 // @encoding = utf-8
 // @task = export.file

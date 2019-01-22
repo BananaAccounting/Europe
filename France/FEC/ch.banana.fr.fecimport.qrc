@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>ch.banana.fr.fecimport.manifest.json</file>
+		<file>fecimporttransactions/ch.banana.fr.app.fecimporttransactions.js</file>
+		<file>fecimportaccounts/ch.banana.fr.app.fecimportaccounts.js</file>
+	</qresource>
+</RCC>

@@ -1,0 +1,5 @@
+*.bak
+*.autosave
+*.DS_Store
+**/test/testresults
+~$*

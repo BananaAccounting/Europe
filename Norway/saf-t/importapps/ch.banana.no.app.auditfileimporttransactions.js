@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2019-02-18
 // @publisher = Banana.ch SA
-// @description = Auditfile NOR - Import Transactions (BETA)
+// @description = Norway Audit File - Import Transactions (BETA)
 // @doctype = *
 // @encoding = utf-8
 // @task = import.transactions

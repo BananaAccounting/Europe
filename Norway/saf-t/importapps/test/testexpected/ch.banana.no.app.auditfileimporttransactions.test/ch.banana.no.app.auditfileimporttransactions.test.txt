@@ -1,0 +1,45 @@
+%%info_test_name{ch.banana.no.app.auditfileimporttransactions.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Europe/Norway/saf-t/importapps/test/ch.banana.no.app.auditfileimporttransactions.test.js}
+%
+\begin{testcase}{ImportTransactionsTest}
+\begin{test}{testBananaApps}
+\textvalue{--- TRANSACTIONS LINES ---}\\
+\textvalue{**********}\\
+\textvalue{Doc:4567, Date:2015-10-31, Description:Faktura 123456, Faktura 123456, DebitAccount:4000, CreditAccount:, Amount:10000}\\
+\textvalue{Doc:4567, Date:2015-10-31, Description:Faktura 123456, Beregnet MVA, DebitAccount:2740, CreditAccount:, Amount:2500}\\
+\textvalue{Doc:4567, Date:2015-10-31, Description:Faktura 123456, Faktura 123456, DebitAccount:, CreditAccount:2400, Amount:12500}\\
+\textvalue{**********}\\
+\textvalue{Doc:5678, Date:2015-10-31, Description:Bilag 5678, Bank, DebitAccount:2400, CreditAccount:, Amount:12500}\\
+\textvalue{Doc:5678, Date:2015-10-31, Description:Bilag 5678, Bank, DebitAccount:, CreditAccount:1925, Amount:12500}\\
+\textvalue{ }\\
+\textvalue{IMPORT FILE}\\
+\textvalue{Date \textbackslash{t} Doc \textbackslash{t} DocType \textbackslash{t} Description \textbackslash{t} Account \textbackslash{t} ContraAccount \textbackslash{t} Income
+ewline 2015-10-31 \textbackslash{t} 4567 \textbackslash{t}  \textbackslash{t} Faktura 123456, Faktura 123456 \textbackslash{t} 4000 \textbackslash{t}  \textbackslash{t} 10000
+ewline 2015-10-31 \textbackslash{t} 4567 \textbackslash{t}  \textbackslash{t} Faktura 123456, Beregnet MVA \textbackslash{t} 2740 \textbackslash{t}  \textbackslash{t} 2500
+ewline 2015-10-31 \textbackslash{t} 4567 \textbackslash{t}  \textbackslash{t} Faktura 123456, Faktura 123456 \textbackslash{t}  \textbackslash{t} 2400 \textbackslash{t} 12500
+ewline 2015-10-31 \textbackslash{t} 5678 \textbackslash{t}  \textbackslash{t} Bilag 5678, Bank \textbackslash{t} 2400 \textbackslash{t}  \textbackslash{t} 12500
+ewline 2015-10-31 \textbackslash{t} 5678 \textbackslash{t}  \textbackslash{t} Bilag 5678, Bank \textbackslash{t}  \textbackslash{t} 1925 \textbackslash{t} 12500
+ewline }\\
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

@@ -1,0 +1,166 @@
+%%info_test_name{ch.banana.no.app.auditfileimportaccounts.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Europe/Norway/saf-t/importapps/test/ch.banana.no.app.auditfileimportaccounts.test.js}
+%
+\begin{testcase}{ImportAccountsTest}
+\begin{test}{testBananaApps}
+\textvalue{--- FORM ---}\\
+\textvalue{[
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "1925",
+ewline     "Description": "Bankkonto 1234.56.78911",
+ewline     "BClass": 1,
+ewline     "Gr": "",
+ewline     "Opening": "1234.56",
+ewline     "NamePrefix": "",
+ewline     "FirstName": "",
+ewline     "FamilyName": "",
+ewline     "Street": "",
+ewline     "PostalCode": "",
+ewline     "Locality": "",
+ewline     "CountryCode": "",
+ewline     "PhoneMain": "",
+ewline     "Fax": "",
+ewline     "EmailWork": "",
+ewline     "Website": "",
+ewline     "BankIban": ""
+ewline   \},
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "2400",
+ewline     "Description": "Leverandørgjeld",
+ewline     "BClass": 2,
+ewline     "Gr": "",
+ewline     "Opening": "-1234.56",
+ewline     "NamePrefix": "",
+ewline     "FirstName": "",
+ewline     "FamilyName": "",
+ewline     "Street": "",
+ewline     "PostalCode": "",
+ewline     "Locality": "",
+ewline     "CountryCode": "",
+ewline     "PhoneMain": "",
+ewline     "Fax": "",
+ewline     "EmailWork": "",
+ewline     "Website": "",
+ewline     "BankIban": ""
+ewline   \},
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "2740",
+ewline     "Description": "MVA-konto",
+ewline     "BClass": 2,
+ewline     "Gr": "",
+ewline     "Opening": "-1234.56",
+ewline     "NamePrefix": "",
+ewline     "FirstName": "",
+ewline     "FamilyName": "",
+ewline     "Street": "",
+ewline     "PostalCode": "",
+ewline     "Locality": "",
+ewline     "CountryCode": "",
+ewline     "PhoneMain": "",
+ewline     "Fax": "",
+ewline     "EmailWork": "",
+ewline     "Website": "",
+ewline     "BankIban": ""
+ewline   \},
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "4000",
+ewline     "Description": "Varekjøp",
+ewline     "BClass": 3,
+ewline     "Gr": "",
+ewline     "Opening": "0",
+ewline     "NamePrefix": "",
+ewline     "FirstName": "",
+ewline     "FamilyName": "",
+ewline     "Street": "",
+ewline     "PostalCode": "",
+ewline     "Locality": "",
+ewline     "CountryCode": "",
+ewline     "PhoneMain": "",
+ewline     "Fax": "",
+ewline     "EmailWork": "",
+ewline     "Website": "",
+ewline     "BankIban": ""
+ewline   \},
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "12000",
+ewline     "Description": "Kunden AS",
+ewline     "BClass": 1,
+ewline     "Gr": "",
+ewline     "Opening": "1234.56",
+ewline     "NamePrefix": "",
+ewline     "FirstName": "Kunde",
+ewline     "FamilyName": "Kontakt",
+ewline     "Street": "Veien 1",
+ewline     "PostalCode": "7000",
+ewline     "Locality": "Trondheim",
+ewline     "CountryCode": "NO",
+ewline     "PhoneMain": "99999999",
+ewline     "Fax": "99999999",
+ewline     "EmailWork": "kontaktperson@domene.offline",
+ewline     "Website": "http://www.domene.offline/",
+ewline     "BankIban": "NO4912345678911"
+ewline   \},
+ewline   \{
+ewline     "Section": "",
+ewline     "Group": "",
+ewline     "Account": "20000",
+ewline     "Description": "Leverandøren AS",
+ewline     "BClass": 2,
+ewline     "Gr": "",
+ewline     "Opening": "-1234.56",
+ewline     "NamePrefix": "Hr.",
+ewline     "FirstName": "Ola",
+ewline     "FamilyName": "Nordmann",
+ewline     "Street": "Veien",
+ewline     "PostalCode": "7000",
+ewline     "Locality": "Trondheim",
+ewline     "CountryCode": "NO",
+ewline     "PhoneMain": "99999999",
+ewline     "Fax": "99999999",
+ewline     "EmailWork": "kontaktperson@domene.offline",
+ewline     "Website": "http://www.domene.offline/",
+ewline     "BankIban": ""
+ewline   \}
+ewline ]}\\
+\textvalue{IMPORT FILE}\\
+\textvalue{Section \textbackslash{t} Group \textbackslash{t} Account \textbackslash{t} Description \textbackslash{t} BClass \textbackslash{t} Gr \textbackslash{t} Opening \textbackslash{t} NamePrefix \textbackslash{t} FirstName \textbackslash{t} FamilyName \textbackslash{t} Street \textbackslash{t} PostalCode \textbackslash{t} Locality \textbackslash{t} CountryCode \textbackslash{t} PhoneMain \textbackslash{t} Fax \textbackslash{t} EmailWork \textbackslash{t} Website \textbackslash{t} BankIban
+ewline  \textbackslash{t}  \textbackslash{t} 1925 \textbackslash{t} Bankkonto 1234.56.78911 \textbackslash{t} 1 \textbackslash{t}  \textbackslash{t} 1234.56 \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t} 
+ewline  \textbackslash{t}  \textbackslash{t} 2400 \textbackslash{t} Leverandørgjeld \textbackslash{t} 2 \textbackslash{t}  \textbackslash{t} -1234.56 \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t} 
+ewline  \textbackslash{t}  \textbackslash{t} 2740 \textbackslash{t} MVA-konto \textbackslash{t} 2 \textbackslash{t}  \textbackslash{t} -1234.56 \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t} 
+ewline  \textbackslash{t}  \textbackslash{t} 4000 \textbackslash{t} Varekjøp \textbackslash{t} 3 \textbackslash{t}  \textbackslash{t} 0 \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t}  \textbackslash{t} 
+ewline  \textbackslash{t}  \textbackslash{t} 12000 \textbackslash{t} Kunden AS \textbackslash{t} 1 \textbackslash{t}  \textbackslash{t} 1234.56 \textbackslash{t}  \textbackslash{t} Kunde \textbackslash{t} Kontakt \textbackslash{t} Veien 1 \textbackslash{t} 7000 \textbackslash{t} Trondheim \textbackslash{t} NO \textbackslash{t} 99999999 \textbackslash{t} 99999999 \textbackslash{t} kontaktperson@domene.offline \textbackslash{t} http://www.domene.offline/ \textbackslash{t} NO4912345678911
+ewline  \textbackslash{t}  \textbackslash{t} 20000 \textbackslash{t} Leverandøren AS \textbackslash{t} 2 \textbackslash{t}  \textbackslash{t} -1234.56 \textbackslash{t} Hr. \textbackslash{t} Ola \textbackslash{t} Nordmann \textbackslash{t} Veien \textbackslash{t} 7000 \textbackslash{t} Trondheim \textbackslash{t} NO \textbackslash{t} 99999999 \textbackslash{t} 99999999 \textbackslash{t} kontaktperson@domene.offline \textbackslash{t} http://www.domene.offline/ \textbackslash{t} 
+ewline }\\
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

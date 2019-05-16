@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>ch.banana.no.auditfile.manifest.json</file>
+		<file>ch.banana.no.app.auditfileimportaccounts.js</file>
+		<file>ch.banana.no.app.auditfileimporttransactions.js</file>
+	</qresource>
+</RCC>

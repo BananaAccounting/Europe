@@ -39,6 +39,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             this.jsonDocArray = [];
             this.gr = "";
             this.bClass = "";
+            this.transId="";
 
             //errors
             this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
@@ -91,21 +92,20 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 /*********************************************************************
                  * ADD THE TRANSACTIONS
                  *********************************************************************/
-                //this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName);
+                this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName);
                 // se non è la versione, avverto che l'importazione delle registrazioni è limitata a 100 righe
-                //Banana.console.debug("is Advanced: "+this.isAdvanced);
-                /*if (!this.isAdvanced) {
+                if (!this.isAdvanced) {
                     var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID, lang);
                     this.banDocument.addMessage(msg, this.ID_ERR_LICENSE_NOTVALID);
-                }*/
+                }
 
                 /*********************************************************************
                  * ADD THE SUBLEDGERS ELEMENTS
                  *********************************************************************/
                 //add the vat codes, solo se è presente la tabella vat
-                /*var table = this.banDocument.table("VatCodes");
+                var table = this.banDocument.table("VatCodes");
                 if (table)
-                    this.createJsonDocument_AddVatCodes(jsonDoc, srcFileName, companyNode);*/
+                    this.createJsonDocument_AddVatCodes(jsonDoc, srcFileName, masterFilesNode);
 
             }
 
@@ -158,11 +158,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             var companyInfos = [];
             var startDate = "";
-            var startDatePeriod = "";
-            var startDateYear = "";
             var endDate = "";
-            var endDateYear = ""
-            var endDatePeriod = "";
+            var endDate="";
             var basicCurrency = "";
 
             var streetAddressNode = "";
@@ -179,19 +176,15 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             //take the information from the node: SelectionCriteria
             if (headerNode.hasChildElements('n1:SelectionCriteria')) {
                 var SelectionCriteriaNode = headerNode.firstChildElement('n1:SelectionCriteria');
-                //find period start date
-                startDateYear = SelectionCriteriaNode.firstChildElement('n1:PeriodStartYear').text;
-                startDatePeriod += SelectionCriteriaNode.firstChildElement('n1:PeriodStart').text;
-                startDatePeriod--; //because js months are from 0 to 11.
-                startDate = new Date(startDateYear, startDatePeriod, 1);
-                Banana.Converter.toInternalDateFormat.debug(startDate);
 
-                //find period end date
-                endDateYear = SelectionCriteriaNode.firstChildElement('n1:PeriodEndYear').text;
-                endDatePeriod += SelectionCriteriaNode.firstChildElement('n1:PeriodEnd').text;
-                endDatePeriod--;
-                endDatePeriod = new Date(endDateYear, endDatePeriod, 31);
-                Banana.Converter.toInternalDateFormat.debug(endDatePeriod);
+                if(SelectionCriteriaNode.hasChildElements('n1:SelectionStartDate')){
+                    startDate = SelectionCriteriaNode.firstChildElement('n1:SelectionStartDate').text;
+                    startDate=startDate.replace(/-/g, "");
+                }
+                if(SelectionCriteriaNode.hasChildElements('n1:SelectionEndDate')){
+                    endDate = SelectionCriteriaNode.firstChildElement('n1:SelectionEndDate').text;
+                    endDate=endDate.replace(/-/g, "");
+                }
             }
 
             basicCurrency = headerNode.firstChildElement('n1:DefaultCurrencyCode').text;
@@ -199,7 +192,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             //take the information from node: company
             if (headerNode.hasChildElements("n1:Company"))
-                var companyNode = headerNode.firstChildElement("n1:Company")
+                var companyNode = headerNode.firstChildElement("n1:Company");
             companyName = companyNode.firstChildElement('n1:Name').text;
             if (companyNode.hasChildElements('n1:RegistrationNumber'))
                 companyIdentification = companyNode.firstChildElement('n1:RegistrationNumber').text;
@@ -208,7 +201,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 streetAddressNode = companyNode.firstChildElement('n1:Address')
             companyStreetName = streetAddressNode.firstChildElement('n1:StreetName').text;
             if (streetAddressNode.hasChildElements('n1:PostalCode'))
-                postalCode = streetAddressNode.firstChildElement('n1:PostalCode');
+                postalCode = streetAddressNode.firstChildElement('n1:PostalCode').text;
             if (streetAddressNode.hasChildElements('n1:City'))
                 companyStreetAddressCity = streetAddressNode.firstChildElement('n1:City').text;
             if (streetAddressNode.hasChildElements('n1:Region'))
@@ -258,6 +251,194 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             return propertyFields;
 
+        }
+
+        createJsonDocument_AddVatCodes(jsonDoc, srcFileName, masterFilesNode){
+            var rows = [];
+            var vatCodesNode = "";
+            var vatNode = "";
+            var vatToPayAccId="";
+            var vatToClaimAccId="";
+            var vatPerc="";
+            var vatAmtType="";
+            var vatTransList=this.vatTransactionsList;
+    
+            vatCodesNode = masterFilesNode.firstChildElement('n1:TaxTable');
+            vatNode = vatCodesNode.firstChildElement('n1:TaxTableEntry');
+    
+            while (vatNode) {
+    
+                var vatId = "";
+                var vatCodeDescription = "";
+    
+    
+                vatId = vatNode.firstChildElement('n1:TaxCode').text;
+                vatCodeDescription = vatNode.firstChildElement('n1:Description').text;
+                if(vatNode.hasChildElements('vatToPayAccID'))
+                    vatToPayAccId=vatNode.firstChildElement('vatToPayAccID').text;
+                if(vatNode.hasChildElements('vatToClaimAccID'))
+                    vatToClaimAccId=vatNode.firstChildElement('vatToClaimAccID').text;
+                //RIPRENDERE DA QUI 11.10.2021
+                for(var i=0;i<vatTransList.length;i++){
+                    if (vatTransList[i].split("_____")[0] === vatId) {
+                        vatPerc = vatTransList[i].split("_____")[1];
+                        vatAmtType = vatTransList[i].split("_____")[2];
+                    }
+                }
+    
+    
+                var row = {};
+                row.operation = {};
+                row.operation.name = "add";
+                row.operation.srcFileName = srcFileName;
+                row.fields = {};
+                row.fields["VatCode"] = vatId;
+                row.fields["Description"] = vatCodeDescription;
+                row.fields["VatRate"] = vatPerc;
+                row.fields["AmountType"] = vatAmtType;
+    
+                rows.push(row);
+    
+                vatNode = vatNode.nextSiblingElement('vatCode');
+            }
+    
+            var dataUnitFilePorperties = {};
+            dataUnitFilePorperties.nameXml = "VatCodes";
+            dataUnitFilePorperties.data = {};
+            dataUnitFilePorperties.data.rowLists = [];
+            dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+    
+            // Banana.Ui.showText(JSON.stringify(dataUnitFilePorperties));
+    
+            jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+    
+        }
+
+        createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName) {
+
+
+            var rows = [];
+
+            var generalLedgerEntriesNode = xmlRoot.firstChildElement('n1:GeneralLedgerEntries');
+            var journalNode = generalLedgerEntriesNode.firstChildElement('n1:Journal');
+        
+            while (journalNode) {
+        
+                var transactionNode = journalNode.firstChildElement('n1:Transaction'); // First transaction
+                while (transactionNode) {
+        
+                    var trId = "";
+                    var trDate = "";
+                    var trDesc = "";
+        
+                    if (transactionNode.hasChildElements('n1:TransactionID')) {
+                        trId = transactionNode.firstChildElement('n1:TransactionID').text;
+                    }
+                    if (transactionNode.hasChildElements('n1:TransactionDate')) {
+                        trDate = transactionNode.firstChildElement('n1:TransactionDate').text;
+                    }
+                    if (transactionNode.hasChildElements('n1:Description')) {
+                        trDesc = transactionNode.firstChildElement('n1:Description').text;
+                    }
+        
+                    //Banana.console.log("NEW TRANSACTION: " + trId + "; " + trDate + "; " + trDesc);
+        
+                    var lineNode = transactionNode.firstChildElement('n1:Line'); // First lineNode
+                    while (lineNode) {
+        
+                        var recordId = "";
+                        var accountId = "";
+                        var sourceDocumentId = "";
+                        var description = "";
+                        var amount = "";
+        
+                        if (lineNode.hasChildElements('n1:RecordID')) {
+                            recordId = lineNode.firstChildElement('n1:RecordID').text;
+                        }
+                        if (lineNode.hasChildElements('n1:AccountID')) {
+                            accountId = lineNode.firstChildElement('n1:AccountID').text;
+                        }
+                        if (lineNode.hasChildElements('n1:SourceDocumentID')) {
+                            sourceDocumentId = lineNode.firstChildElement('n1:SourceDocumentID').text;
+                        } else {
+                            if (lineNode.hasChildElements('n1:ReferenceNumber')) { //if SourceDocumentID does not extist we use ReferenceNumber
+                                sourceDocumentId = lineNode.firstChildElement('n1:ReferenceNumber').text;
+                            }
+                        }
+                        if (lineNode.hasChildElements('n1:Description')) {
+                            description = lineNode.firstChildElement('n1:Description').text;
+                        }
+                        if (lineNode.hasChildElements('n1:DebitAmount')) {
+                            var transactionDebitAccount = accountId;
+                            var transactionCreditAccount = "";
+                            var debitAmountNode = lineNode.firstChildElement('n1:DebitAmount');
+                            if (debitAmountNode.hasChildElements('n1:Amount')) {
+                                amount = debitAmountNode.firstChildElement('n1:Amount').text;
+                            }
+                        }
+                        if (lineNode.hasChildElements('n1:CreditAmount')) {
+                            var transactionDebitAccount = "";
+                            var transactionCreditAccount = accountId;
+                            var creditAmountNode = lineNode.firstChildElement('n1:CreditAmount');
+                            if (creditAmountNode.hasChildElements('n1:Amount')) {
+                                amount = creditAmountNode.firstChildElement('n1:Amount').text;
+                            }
+                        }
+                        //Banana.console.log(recordId + "; " + accountId + "; " + sourceDocumentId + "; " + description + "; " + amount);
+        
+                        // Description of the transaction
+                        var transactionDescription = "";
+                        if (trDesc) {
+                            transactionDescription = trDesc + ", " + description;
+                        } else {
+                            transactionDescription = description;
+                        }
+
+                        var row = {};
+                        row.operation = {};
+                        row.operation.name = "add";
+                        row.operation.srcFileName = srcFileName;
+                        row.fields = {};
+                        row.fields["Date"] = trDate;
+                        row.fields["Doc"] = trId;
+                        row.fields["Description"] = transactionDescription;
+                        row.fields["AccountDebit"] = transactionDebitAccount;
+                        row.fields["AccountCredit"] = transactionCreditAccount;
+                        row.fields["Amount"] = amount;
+                        //row.fields["VatCode"] = "["+trLineVatId+"]";
+
+
+                        rows.push(row);
+
+                        
+        
+                        lineNode = lineNode.nextSiblingElement('n1:Line'); // Next trLine
+                    }
+        
+                    transactionNode = transactionNode.nextSiblingElement('n1:Transaction'); // Next transaction
+
+                    //add an empty row every new block of transactions
+                    if (this.transId !== trId) {
+                        var emptyRow = this.getEmptyRow();
+                        rows.push(emptyRow);
+                    }
+                    this.transId = trId;
+                }
+                journalNode = journalNode.nextSiblingElement('n1:Journal'); // Next journal
+            }
+
+            //se non è la versione advanced,limito le registrazioni importate a 100 righe
+            if (!this.isAdvanced) {
+                rows=rows.slice(0,100);
+            }
+
+            var dataUnitFilePorperties = {};
+            dataUnitFilePorperties.nameXml = "Transactions";
+            dataUnitFilePorperties.data = {};
+            dataUnitFilePorperties.data.rowLists = [];
+            dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+    
+            jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
         }
 
         /**

@@ -39,6 +39,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             this.jsonDocArray = [];
             this.gr = "";
             this.bClass = "";
+            this.accType="";
             this.transId="";
 
             //errors
@@ -86,14 +87,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 /*********************************************************************
                  * ADD THE COSTUMERS/SUPPLIERS
                  *********************************************************************/
-                /* if (customersSuppliersList.length > 0)
-                     this.createJsonDocument_AddCostumersSuppliers(jsonDoc, srcFileName, customerSupplierNode, customersSuppliersList);*/
+                this.createJsonDocument_AddCustomers(jsonDoc, srcFileName, masterFilesNode);
+                this.createJsonDocument_AddSuppliers(jsonDoc, srcFileName, masterFilesNode);
 
                 /*********************************************************************
                  * ADD THE TRANSACTIONS
                  *********************************************************************/
                 this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName);
-                // se non è la versione, avverto che l'importazione delle registrazioni è limitata a 100 righe
+                // se non è la versione giusta, avverto che l'importazione delle registrazioni è limitata a 100 righe
                 if (!this.isAdvanced) {
                     var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID, lang);
                     this.banDocument.addMessage(msg, this.ID_ERR_LICENSE_NOTVALID);
@@ -257,34 +258,23 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             var rows = [];
             var vatCodesNode = "";
             var vatNode = "";
-            var vatToPayAccId="";
-            var vatToClaimAccId="";
+            var vatCodeDetailsNode="";
             var vatPerc="";
             var vatAmtType="";
-            var vatTransList=this.vatTransactionsList;
     
             vatCodesNode = masterFilesNode.firstChildElement('n1:TaxTable');
             vatNode = vatCodesNode.firstChildElement('n1:TaxTableEntry');
     
             while (vatNode) {
     
-                var vatId = "";
+                var vatCode="";
                 var vatCodeDescription = "";
-    
-    
-                vatId = vatNode.firstChildElement('n1:TaxCode').text;
-                vatCodeDescription = vatNode.firstChildElement('n1:Description').text;
-                if(vatNode.hasChildElements('vatToPayAccID'))
-                    vatToPayAccId=vatNode.firstChildElement('vatToPayAccID').text;
-                if(vatNode.hasChildElements('vatToClaimAccID'))
-                    vatToClaimAccId=vatNode.firstChildElement('vatToClaimAccID').text;
-                //RIPRENDERE DA QUI 11.10.2021
-                for(var i=0;i<vatTransList.length;i++){
-                    if (vatTransList[i].split("_____")[0] === vatId) {
-                        vatPerc = vatTransList[i].split("_____")[1];
-                        vatAmtType = vatTransList[i].split("_____")[2];
-                    }
-                }
+
+                vatCodeDetailsNode = vatNode.firstChildElement('n1:TaxCodeDetails');
+
+                vatCode=vatCodeDetailsNode.firstChildElement('n1:TaxCode').text;
+                vatCodeDescription = vatCodeDetailsNode.firstChildElement('n1:Description').text;
+                vatPerc=vatCodeDetailsNode.firstChildElement('n1:TaxPercentage').text;
     
     
                 var row = {};
@@ -292,14 +282,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 row.operation.name = "add";
                 row.operation.srcFileName = srcFileName;
                 row.fields = {};
-                row.fields["VatCode"] = vatId;
+                row.fields["VatCode"] = vatCode;
                 row.fields["Description"] = vatCodeDescription;
                 row.fields["VatRate"] = vatPerc;
                 row.fields["AmountType"] = vatAmtType;
     
                 rows.push(row);
     
-                vatNode = vatNode.nextSiblingElement('vatCode');
+                vatNode = vatNode.nextSiblingElement('n1:TaxTableEntry');
             }
     
             var dataUnitFilePorperties = {};
@@ -476,10 +466,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 if (accountNode.hasChildElements('n1:AccountDescription'))
                     accountDescription = accountNode.firstChildElement('n1:AccountDescription').text;
 
+                /**
+                 * come scritto nella documentazione ufficiale, per mappare i conti in raggruppamenti posso usare l'elemento 'StandardAccountID', o in sua 
+                 * assenza posso utilizzare 'GroupingCode' o 'GroupingCategory '
+                 */
                 if (accountNode.hasChildElements('n1:StandardAccountID'))
                     gr = accountNode.firstChildElement('n1:StandardAccountID').text;
-                else
-                    gr = this.setGrByAccount(accountNumber);
+                else if(accountNode.hasChildElements('n1:GroupingCode'))
+                    gr = accountNode.firstChildElement('n1:GroupingCode');
 
                 if (accountNode.hasChildElements('n1:AccountType'))
                     accType = accountNode.firstChildElement('n1:AccountType').text;
@@ -488,12 +482,29 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
                 if (accountNode.hasChildElements('n1:OpeningDebitBalance'))
                     opening = accountNode.firstChildElement('n1:OpeningDebitBalance').text;
+                if (accountNode.hasChildElements('n1:OpeningCreditBalance')){
+                    opening = accountNode.firstChildElement('n1:OpeningCreditBalance').text;
+                    opening=Banana.SDecimal.invert(opening);
+                }
 
 
+                //if the group change, we create a grouping row, same with the bclass
                 if (this.gr != gr) {
-                    var grRows = this.getGroupRow(this.gr, accType);
+
+                    //carried over groups
+                    var grCarriedOver = this.getGroupCarriedOver(this.gr);
+                    var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver);
+                    rows.push(grCarrOverRows.row);
+                    //normal groups
+                    var grRows = this.getGroupRow(this.gr, this.bClass);
                     rows.push(grRows.row);
                     rows.push(grRows.emptyRow);
+                }
+
+                if (this.bClass != bclass) {
+                    var secRows = this.getSectionRow();
+                    rows.push(secRows.row);
+                    rows.push(secRows.emptyRow);
                 }
 
 
@@ -512,10 +523,32 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 rows.push(row);
 
                 this.gr = gr;
+                this.bClass=bclass;
+                this.accType=accType;
 
 
                 accountNode = accountNode.nextSiblingElement('n1:Account');
             }
+
+            //alla fine aggiungo ancora il raggruppamento e la sezione finale riprendendo gli ultimi elementi salvati
+            //last group
+            var grRows = this.getGroupRow();
+            rows.push(grRows.row);
+            rows.push(grRows.emptyRow);
+            //last section
+            var secRows = this.getSectionRow()
+            rows.push(secRows.row);
+            rows.push(secRows.emptyRow);
+
+            //aggiungo il totale del CE (utile o perdita)
+            var totCeRow = this.getTotCeRow();
+            rows.push(totCeRow.row);
+            rows.push(totCeRow.emptyRow);
+
+            //aggiungo la differenza del Bilancio (dovrebbe essere zero)
+            var balanceDiff = this.getBalanceDiff();
+            rows.push(balanceDiff.row);
+            rows.push(balanceDiff.emptyRow);
 
 
             var dataUnitFilePorperties = {};
@@ -531,22 +564,443 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         }
 
-        getGroupRow(grCode, accType) {
+        createJsonDocument_AddCustomers(jsonDoc, srcFileName, masterFilesNode) {
+
+            //creates the row that indicates
+            //fare in modo che vengano divisi i clienti con i fornitori nel piano dei conti
+    
+            var rows = [];
+            //svuoto la variabile già utilizzata per i conti del bilancio e conto economico
+            this.bClass = "";
+            var customersNode="";
+            var customerNode="";
+
+            if(masterFilesNode.hasChildElements('n1:Customers')){
+                customersNode=masterFilesNode.firstChildElement('n1:Customers');
+                customerNode=customersNode.firstChildElement('n1:Customer');
+            }
+
+    
+            while (customerNode) { // For each customerSupplierNode
+
+                var accountNumber = "";
+                var accountId="";
+                var accountDescription = "";
+                var openingDebitBalance="";
+                var gr = "";
+                var bclass = "";
+                var accountOpening = "";
+                var nameprefix = "";
+                var firstname = "";
+                var familyname = "";
+                var street = "";
+                var zip = "";
+                var locality = "";
+                var countryCode = "";
+                var phoneMain = "";
+                var fax = "";
+                var email = "";
+                var website = "";
+                var bankiban = "";
+
+    
+                if (customerNode.hasChildElements('n1:CustomerID'))
+                    accountNumber = customerNode.firstChildElement('n1:CustomerID').text;
+
+                if (customerNode.hasChildElements('n1:AccountID')){
+                    accountId = customerNode.firstChildElement('n1:AccountID').text;
+                    bclass = this.setBClassByAccount(accountId);
+                    gr = this.setCSGrByBclass(bclass);
+                }
+
+                if (customerNode.hasChildElements('n1:Name'))
+                    accountDescription = customerNode.firstChildElement('n1:Name').text;
+
+                if (customerNode.hasChildElements('n1:OpeningDebitBalance'))
+                    openingDebitBalance = customerNode.firstChildElement('n1:OpeningDebitBalance').text;
+
+                if (customerNode.hasChildElements('n1:Contact')) {
+                    var contactNode=customerNode.firstChildElement('n1:Contact');
+                    if(contactNode.hasChildElements('n1:Telephone'))
+                        phoneMain = contactNode.firstChildElement('n1:Telephone').text;
+                    if(contactNode.hasChildElements('n1:Fax'))
+                        fax=contactNode.firstChildElement('n1:Fax').text;
+                    if (contactNode.hasChildElements('n1:Email')) 
+                            email = contactNode.firstChildElement('n1:Email').text;
+                    if (contactNode.hasChildElements('n1:Website'))
+                            website = contactNode.firstChildElement('n1:Website').text;
+                }
+    
+                if (customerNode.hasChildElements('n1:Address')) {
+                    var streetAddressNode = customerNode.firstChildElement('n1:Address');
+                    if (streetAddressNode.hasChildElements('n1:StreetName')) {
+                        street = streetAddressNode.firstChildElement('n1:StreetName').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:PostalCode')) {
+                        zip = streetAddressNode.firstChildElement('n1:PostalCode').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:City')) {
+                        locality = streetAddressNode.firstChildElement('n1:City').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:Country')) {
+                        countryCode = streetAddressNode.firstChildElement('n1:Country').text;
+                    }
+                }
+    
+                if (customerNode.hasChildElements('n1:BankAccount')) {
+                    var bankAccountNode = customerNode.firstChildElement('n1:BankAccount');
+                    if (bankAccountNode.hasChildElements('n1:IBANNumber')) {
+                        bankiban = bankAccountNode.firstChildElement('n1:IBANNumber').text;
+                    }
+                }
+
+    
+                var row = {};
+                row.operation = {};
+                row.operation.name = "add";
+                row.operation.srcFileName = srcFileName;
+                row.fields = {};
+                row.fields["Account"] = accountNumber;
+                row.fields["Description"] = accountDescription;
+                row.fields["Opening"] = openingDebitBalance;
+                row.fields["BClass"] = bclass;
+                row.fields["Gr"] = gr;
+                row.fields["Opening"] = accountOpening;
+                row.fields["NamePrefix"] = nameprefix;
+                row.fields["FirstName"] = firstname;
+                row.fields["FamilyName"] = familyname;
+                row.fields["Street"] = street;
+                row.fields["PostalCode"] = zip;
+                row.fields["Locality"] = locality;
+                row.fields["CountryCode"] = countryCode;
+                row.fields["PhoneMain"] = phoneMain;
+                row.fields["Fax"] = fax;
+                row.fields["EmailWork"] = email;
+                row.fields["Website"] = website;
+                row.fields["BankIban"] = bankiban;
+    
+                rows.push(row);
+    
+                this.bClass = bclass;
+    
+                customerNode = customerNode.nextSiblingElement('n1:Customers'); // Next customerSupplier
+            }
+    
+            var dataUnitFilePorperties = {};
+            dataUnitFilePorperties.nameXml = "Accounts";
+            dataUnitFilePorperties.data = {};
+            dataUnitFilePorperties.data.rowLists = [];
+            dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+    
+            jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+    
+    
+        }
+
+        createJsonDocument_AddSuppliers(jsonDoc, srcFileName, masterFilesNode) {
+
+            //creates the row that indicates
+            //fare in modo che vengano divisi i clienti con i fornitori nel piano dei conti
+    
+            var rows = [];
+            //svuoto la variabile già utilizzata per i conti del bilancio e conto economico
+            this.bClass = "";
+            var suppliersNode="";
+            var supplierNode="";
+
+            if(masterFilesNode.hasChildElements('n1:Suppliers')){
+                suppliersNode=masterFilesNode.firstChildElement('n1:Suppliers');
+                supplierNode=suppliersNode.firstChildElement('n1:Supplier');
+            }
+
+    
+            while (supplierNode) { // For each customerSupplierNode
+
+                var accountNumber = "";
+                var accountId="";
+                var accountDescription = "";
+                var openingCreditBalance="";
+                var gr = "";
+                var bclass = "";
+                var accountOpening = "";
+                var nameprefix = "";
+                var firstname = "";
+                var familyname = "";
+                var street = "";
+                var zip = "";
+                var locality = "";
+                var countryCode = "";
+                var phoneMain = "";
+                var fax = "";
+                var email = "";
+                var website = "";
+                var bankiban = "";
+
+    
+                if (customerNode.hasChildElements('n1:SupplierID'))
+                    accountNumber = customerNode.firstChildElement('n1:SupplierID').text;
+
+                if (customerNode.hasChildElements('n1:AccountID')){
+                    accountId = customerNode.firstChildElement('n1:AccountID').text;
+                    bclass = this.setBClassByAccount(accountId);
+                    gr = this.setCSGrByBclass(bclass);
+                }
+
+                if(customerNode.hasChildElements('n1:OpeningCreditBalance'))
+                    openingCreditBalance=customerNode.firstChildElement('n1:OpeningCreditBalance');
+
+                if (customerNode.hasChildElements('n1:Name'))
+                    accountDescription = customerNode.firstChildElement('n1:Name').text;
+
+                //RIPRENDERE DA MODIFICA DEI SUPPLIERS 12.10.2021
+
+                if (customerNode.hasChildElements('n1:Contact')) {
+                    var contactNode=customerNode.firstChildElement('n1:Contact');
+                    if(contactNode.hasChildElements('n1:Telephone'))
+                        phoneMain = contactNode.firstChildElement('n1:Telephone').text;
+                    if(contactNode.hasChildElements('n1:Fax'))
+                        fax=contactNode.firstChildElement('n1:Fax').text;
+                    if (contactNode.hasChildElements('n1:Email')) 
+                            email = contactNode.firstChildElement('n1:Email').text;
+                    if (contactNode.hasChildElements('n1:Website'))
+                            website = contactNode.firstChildElement('n1:Website').text;
+                }
+    
+                if (customerNode.hasChildElements('n1:Address')) {
+                    var streetAddressNode = customerNode.firstChildElement('n1:Address');
+                    if (streetAddressNode.hasChildElements('n1:StreetName')) {
+                        street = streetAddressNode.firstChildElement('n1:StreetName').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:PostalCode')) {
+                        zip = streetAddressNode.firstChildElement('n1:PostalCode').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:City')) {
+                        locality = streetAddressNode.firstChildElement('n1:City').text;
+                    }
+                    if (streetAddressNode.hasChildElements('n1:Country')) {
+                        countryCode = streetAddressNode.firstChildElement('n1:Country').text;
+                    }
+                }
+    
+                if (customerNode.hasChildElements('n1:BankAccount')) {
+                    var bankAccountNode = customerNode.firstChildElement('n1:BankAccount');
+                    if (bankAccountNode.hasChildElements('n1:IBANNumber')) {
+                        bankiban = bankAccountNode.firstChildElement('n1:IBANNumber').text;
+                    }
+                }
+
+    
+                var row = {};
+                row.operation = {};
+                row.operation.name = "add";
+                row.operation.srcFileName = srcFileName;
+                row.fields = {};
+                row.fields["Account"] = accountNumber;
+                row.fields["Description"] = accountDescription;
+                row.fields["Opening"] = Banana.SDecimal.invert(openingCreditBalance);
+                row.fields["BClass"] = bclass;
+                row.fields["Gr"] = gr;
+                row.fields["Opening"] = accountOpening;
+                row.fields["NamePrefix"] = nameprefix;
+                row.fields["FirstName"] = firstname;
+                row.fields["FamilyName"] = familyname;
+                row.fields["Street"] = street;
+                row.fields["PostalCode"] = zip;
+                row.fields["Locality"] = locality;
+                row.fields["CountryCode"] = countryCode;
+                row.fields["PhoneMain"] = phoneMain;
+                row.fields["Fax"] = fax;
+                row.fields["EmailWork"] = email;
+                row.fields["Website"] = website;
+                row.fields["BankIban"] = bankiban;
+    
+                rows.push(row);
+    
+                this.bClass = bclass;
+    
+                supplierNode = supplierNode.nextSiblingElement('n1:Suppliers'); // Next customerSupplier
+            }
+    
+            var dataUnitFilePorperties = {};
+            dataUnitFilePorperties.nameXml = "Accounts";
+            dataUnitFilePorperties.data = {};
+            dataUnitFilePorperties.data.rowLists = [];
+            dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+    
+            jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+    
+    
+        }
+
+
+        setCSGrByBclass(bClass) {
+            var gr = "";
+            switch (bClass) {
+                case "1":
+                    gr = "DEB"
+                    return gr;
+                case "2":
+                    gr = "CRE"
+                    return gr;
+                default:
+                    return gr;
+            }
+        }
+
+        getGroupRow() {
             var grRows = {};
-            if (!grCode)
+            if (!this.gr)
                 return grRows;
             grRows.row = {};
             grRows.row.operation = {};
             grRows.row.operation.name = "add";
             grRows.row.fields = {};
-            grRows.row.fields["Group"] = grCode;
+            grRows.row.fields["Group"] = this.gr;
             grRows.row.fields["Description"] = "Gr description";
-            grRows.row.fields["Gr"] = "1";
+            grRows.row.fields["Gr"] = this.getGroupTotal(this.bClass);
             grRows.emptyRow = this.getEmptyRow();
 
             return grRows;
         }
 
+        getGroupCarriedOver() {
+            var grCarriedOver = {};
+            switch (this.gr) {
+                //verificare di prendere il gruppo corretto
+                case "27":
+                    grCarriedOver.gr = "0511"
+                    grCarriedOver.description = "ÅRSRESULTAT"
+                    return grCarriedOver;
+                default:
+                    return null;
+            }
+        }
+
+        getGroupRow_carriedOver(grCarriedOver) {
+            var grRows = {};
+            if (grCarriedOver != null) {
+                grRows.row = {};
+                grRows.row.operation = {};
+                grRows.row.operation.name = "add";
+                grRows.row.fields = {};
+                grRows.row.fields["Group"] = grCarriedOver.gr;
+                grRows.row.fields["Description"] = grCarriedOver.description;
+                grRows.row.fields["Gr"] = this.gr;
+            }
+            return grRows;
+        }
+
+        getSectionRow() {
+            var secRows = {};
+            secRows.row = {};
+            secRows.row.operation = {};
+            secRows.row.operation.name = "add";
+            secRows.row.fields = {};
+            secRows.row.fields["Group"] = this.getGroupTotal(this.bClass);
+            secRows.row.fields["Description"] = this.getSectionDescription(this.bClass);
+            secRows.row.fields["Gr"]=this.getSectionGr(this.bClass);
+            //create an empty row to append after the total row
+            secRows.emptyRow = this.getEmptyRow();
+            return secRows;
+        }
+
+        getGroupTotal(bclass) {
+            var groupTotal = "";
+            switch (bclass) {
+                case "1":
+                    groupTotal = "1.1"
+                    return groupTotal;
+                case "2":
+                    groupTotal = "2.2"
+                    return groupTotal;
+                case "3":
+                    groupTotal = "3.3"
+                    return groupTotal;
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                    groupTotal = "4.4"
+                    return groupTotal;
+                case "8":
+                    groupTotal = "8.8"
+                    return groupTotal;
+                default:
+                    return groupTotal;
+                }
+        }
+
+        getSectionGr(bclass){
+            var sectionTotal = "";
+            switch (bclass) {
+                case "1":
+                case "2":
+                    sectionTotal = "00"
+                    return sectionTotal;
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                    sectionTotal = "02"
+                    return sectionTotal;
+                default:
+                    return sectionTotal;
+                }
+        }
+
+        getSectionDescription(bclass) {
+            var descr = "";
+                switch (bclass) {
+                    case "1":
+                        descr = "EIENDELER"
+                        return descr;
+                    case "2":
+                        descr = "EGENKAPITAL OG GJELD"
+                        return descr;
+                    case "3":
+                        descr = "SALGS- OG DRIFRSINNTEKT"
+                        return descr;
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                        descr = "DRIFTSKOSTNAD"
+                        return descr;
+                    case "8":
+                        descr = "FINANSINNTEKT OF -KOSTNAD, EKSTRAORINAER INNTEKT OG -KOSTNAD OG SKATT"
+                        return descr;
+                    default:
+                        return descr;
+                }
+        }
+
+        getTotCeRow() {
+            var ceRows = {};
+            ceRows.row = {};
+            ceRows.row.operation = {};
+            ceRows.row.operation.name = "add";
+            ceRows.row.fields = {};
+            ceRows.row.fields["Group"] = "02";
+            ceRows.row.fields["Description"] = "ÅRSRESULTAT";
+            ceRows.row.fields["Gr"] = "0511";
+    
+            return ceRows;
+        }
+
+        getBalanceDiff() {
+            var balanceRows = {};
+            balanceRows.row = {};
+            balanceRows.row.operation = {};
+            balanceRows.row.operation.name = "add";
+            balanceRows.row.fields = {};
+            balanceRows.row.fields["Group"] = "00";
+            balanceRows.row.fields["Description"] = "Skillnaden måste vara noll (tom cell)";
+            balanceRows.emptyRow = this.getEmptyRow();
+    
+            return balanceRows;
+        }
         getEmptyRow() {
             var emptyRow = {};
             emptyRow.operation = {};
@@ -554,26 +1008,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             emptyRow.fields = {};
 
             return emptyRow;
-        }
-
-        getGroupTotal(bclass, accType) {
-            var groupTotal = "";
-            switch (bclass) {
-                case "1":
-                    groupTotal = "1I"
-                    return groupTotal;
-                case "2":
-                    groupTotal = "2E"
-                    return groupTotal;
-                case "3":
-                    groupTotal = "3G"
-                    return groupTotal;
-                case "4":
-                    groupTotal = "4D"
-                    return groupTotal;
-                default:
-                    return groupTotal;
-            }
         }
 
         // Return the BClass for the given account
@@ -729,12 +1163,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             return lang;
         }
     }
-    // Return the group (Gr) for the given account
-function setGrByAccount(account) {
-    var gr = "";
-    //....
-    return gr;
-}
 
 function exec(inData) {
 

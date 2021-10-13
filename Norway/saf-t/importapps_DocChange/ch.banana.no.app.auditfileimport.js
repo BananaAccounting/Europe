@@ -341,6 +341,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                         var sourceDocumentId = "";
                         var description = "";
                         var amount = "";
+                        var vatId="";
         
                         if (lineNode.hasChildElements('n1:RecordID')) {
                             recordId = lineNode.firstChildElement('n1:RecordID').text;
@@ -374,7 +375,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                                 amount = creditAmountNode.firstChildElement('n1:Amount').text;
                             }
                         }
-                        //Banana.console.log(recordId + "; " + accountId + "; " + sourceDocumentId + "; " + description + "; " + amount);
+                    
+                    //row VAT 
+                    if (lineNode.hasChildElements('n1:TaxInformation')) {
+                        var lineVat = lineNode.firstChildElement('n1:TaxInformation');
+                        vatId = lineVat.firstChildElement('n1:TaxCode').text;
+                        if(vatId)
+                            vatId="[" + vatId + "]";
+                    }
         
                         // Description of the transaction
                         var transactionDescription = "";
@@ -395,6 +403,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                         row.fields["AccountDebit"] = transactionDebitAccount;
                         row.fields["AccountCredit"] = transactionCreditAccount;
                         row.fields["Amount"] = amount;
+                        row.fields["VatCode"] = vatId;
                         //row.fields["VatCode"] = "["+trLineVatId+"]";
 
 
@@ -496,13 +505,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver);
                     rows.push(grCarrOverRows.row);
                     //normal groups
-                    var grRows = this.getGroupRow(this.gr, this.bClass);
+                    var grRows = this.getGroupRow(this.accType);
                     rows.push(grRows.row);
                     rows.push(grRows.emptyRow);
                 }
 
                 if (this.bClass != bclass) {
-                    var secRows = this.getSectionRow();
+                    var secRows = this.getSectionRow(this.accType);
                     rows.push(secRows.row);
                     rows.push(secRows.emptyRow);
                 }
@@ -532,11 +541,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             //alla fine aggiungo ancora il raggruppamento e la sezione finale riprendendo gli ultimi elementi salvati
             //last group
-            var grRows = this.getGroupRow();
+            var grRows = this.getGroupRow(accType);
             rows.push(grRows.row);
             rows.push(grRows.emptyRow);
             //last section
-            var secRows = this.getSectionRow()
+            var secRows = this.getSectionRow(accType);
             rows.push(secRows.row);
             rows.push(secRows.emptyRow);
 
@@ -585,6 +594,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
                 var accountNumber = "";
                 var accountId="";
+                var accountType=""; // DEB(costumers) if accountId is a passive Account, CRED(suppliers)
                 var accountDescription = "";
                 var openingDebitBalance="";
                 var gr = "";
@@ -609,6 +619,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
                 if (customerNode.hasChildElements('n1:AccountID')){
                     accountId = customerNode.firstChildElement('n1:AccountID').text;
+                    accountType=this.setAccountType(accountId);
                     bclass = this.setBClassByAccount(accountId);
                     gr = this.setCSGrByBclass(bclass);
                 }
@@ -683,8 +694,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     
                 this.bClass = bclass;
     
-                customerNode = customerNode.nextSiblingElement('n1:Customers'); // Next customerSupplier
+                customerNode = customerNode.nextSiblingElement('n1:Customer'); // Next customerSupplier
             }
+
+            var secRows = this.getSectionRow(accountType);
+            rows.push(secRows.row);
+            rows.push(secRows.emptyRow);
     
             var dataUnitFilePorperties = {};
             dataUnitFilePorperties.nameXml = "Accounts";
@@ -718,6 +733,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
                 var accountNumber = "";
                 var accountId="";
+                var accountType=""; // DEB(costumers) if accountId is a passive Account, CRED(suppliers)
                 var accountDescription = "";
                 var openingCreditBalance="";
                 var gr = "";
@@ -737,25 +753,24 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 var bankiban = "";
 
     
-                if (customerNode.hasChildElements('n1:SupplierID'))
-                    accountNumber = customerNode.firstChildElement('n1:SupplierID').text;
+                if (supplierNode.hasChildElements('n1:SupplierID'))
+                    accountNumber = supplierNode.firstChildElement('n1:SupplierID').text;
 
-                if (customerNode.hasChildElements('n1:AccountID')){
-                    accountId = customerNode.firstChildElement('n1:AccountID').text;
+                if (supplierNode.hasChildElements('n1:AccountID')){
+                    accountId = supplierNode.firstChildElement('n1:AccountID').text;
+                    accountType=this.setAccountType(accountId);
                     bclass = this.setBClassByAccount(accountId);
                     gr = this.setCSGrByBclass(bclass);
                 }
 
-                if(customerNode.hasChildElements('n1:OpeningCreditBalance'))
-                    openingCreditBalance=customerNode.firstChildElement('n1:OpeningCreditBalance');
+                if(supplierNode.hasChildElements('n1:OpeningCreditBalance'))
+                    openingCreditBalance=supplierNode.firstChildElement('n1:OpeningCreditBalance');
 
-                if (customerNode.hasChildElements('n1:Name'))
-                    accountDescription = customerNode.firstChildElement('n1:Name').text;
+                if (supplierNode.hasChildElements('n1:Name'))
+                    accountDescription = supplierNode.firstChildElement('n1:Name').text;
 
-                //RIPRENDERE DA MODIFICA DEI SUPPLIERS 12.10.2021
-
-                if (customerNode.hasChildElements('n1:Contact')) {
-                    var contactNode=customerNode.firstChildElement('n1:Contact');
+                if (supplierNode.hasChildElements('n1:Contact')) {
+                    var contactNode=supplierNode.firstChildElement('n1:Contact');
                     if(contactNode.hasChildElements('n1:Telephone'))
                         phoneMain = contactNode.firstChildElement('n1:Telephone').text;
                     if(contactNode.hasChildElements('n1:Fax'))
@@ -766,8 +781,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                             website = contactNode.firstChildElement('n1:Website').text;
                 }
     
-                if (customerNode.hasChildElements('n1:Address')) {
-                    var streetAddressNode = customerNode.firstChildElement('n1:Address');
+                if (supplierNode.hasChildElements('n1:Address')) {
+                    var streetAddressNode = supplierNode.firstChildElement('n1:Address');
                     if (streetAddressNode.hasChildElements('n1:StreetName')) {
                         street = streetAddressNode.firstChildElement('n1:StreetName').text;
                     }
@@ -782,8 +797,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     }
                 }
     
-                if (customerNode.hasChildElements('n1:BankAccount')) {
-                    var bankAccountNode = customerNode.firstChildElement('n1:BankAccount');
+                if (supplierNode.hasChildElements('n1:BankAccount')) {
+                    var bankAccountNode = supplierNode.firstChildElement('n1:BankAccount');
                     if (bankAccountNode.hasChildElements('n1:IBANNumber')) {
                         bankiban = bankAccountNode.firstChildElement('n1:IBANNumber').text;
                     }
@@ -818,8 +833,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     
                 this.bClass = bclass;
     
-                supplierNode = supplierNode.nextSiblingElement('n1:Suppliers'); // Next customerSupplier
+                supplierNode = supplierNode.nextSiblingElement('n1:Supplier'); //next supplier
             }
+
+            var secRows = this.getSectionRow(accountType);
+            rows.push(secRows.row);
+            rows.push(secRows.emptyRow);
+    
     
             var dataUnitFilePorperties = {};
             dataUnitFilePorperties.nameXml = "Accounts";
@@ -830,6 +850,19 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
     
     
+        }
+
+        getCustomerSuppliersBalancesList(){
+
+        }
+
+        setAccountType(accountId){
+            var accType="";
+            if(accountId.substr(0,1)=="2")
+                accType="CRE";
+            else if(accountId.substr(0,1)=="1")
+                accType="DEB";
+            return accType
         }
 
 
@@ -847,7 +880,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             }
         }
 
-        getGroupRow() {
+        getGroupRow(accType) {
             var grRows = {};
             if (!this.gr)
                 return grRows;
@@ -857,7 +890,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             grRows.row.fields = {};
             grRows.row.fields["Group"] = this.gr;
             grRows.row.fields["Description"] = "Gr description";
-            grRows.row.fields["Gr"] = this.getGroupTotal(this.bClass);
+            grRows.row.fields["Gr"] = this.getGroupTotal(accType);
             grRows.emptyRow = this.getEmptyRow();
 
             return grRows;
@@ -890,69 +923,97 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             return grRows;
         }
 
-        getSectionRow() {
+        getSectionRow(accType) {
             var secRows = {};
             secRows.row = {};
             secRows.row.operation = {};
             secRows.row.operation.name = "add";
             secRows.row.fields = {};
-            secRows.row.fields["Group"] = this.getGroupTotal(this.bClass);
+            secRows.row.fields["Group"] = this.getGroupTotal(accType);
             secRows.row.fields["Description"] = this.getSectionDescription(this.bClass);
-            secRows.row.fields["Gr"]=this.getSectionGr(this.bClass);
+            secRows.row.fields["Gr"]=this.getSectionGr(accType);
             //create an empty row to append after the total row
             secRows.emptyRow = this.getEmptyRow();
             return secRows;
         }
 
-        getGroupTotal(bclass) {
+        /**
+         * 
+         * @param {*} bClass element bclass
+         * @param {*} PreviousAccType B if it an element from balance, C or S it's for customer and suppliers (i set this value manually,  it is not an information in the xml file)
+         * @returns 
+         */
+        getGroupTotal(accType) {
             var groupTotal = "";
-            switch (bclass) {
-                case "1":
-                    groupTotal = "1.1"
-                    return groupTotal;
-                case "2":
-                    groupTotal = "2.2"
-                    return groupTotal;
-                case "3":
-                    groupTotal = "3.3"
-                    return groupTotal;
-                case "4":
-                case "5":
-                case "6":
-                case "7":
-                    groupTotal = "4.4"
-                    return groupTotal;
-                case "8":
-                    groupTotal = "8.8"
-                    return groupTotal;
-                default:
-                    return groupTotal;
+            if(accType=="GL"){//if it is a general ledger account
+                switch (this.bClass) {
+                    case "1":
+                        groupTotal = "1.1"
+                        return groupTotal;
+                    case "2":
+                        groupTotal = "2.2"
+                        return groupTotal;
+                    case "3":
+                        groupTotal = "3.3"
+                        return groupTotal;
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                        groupTotal = "4.4"
+                        return groupTotal;
+                    case "8":
+                        groupTotal = "8.8"
+                        return groupTotal;
+                    default:
+                        return groupTotal;
                 }
+            }else{// So if it is a customer or supplier
+                switch (this.bClass) {
+                    case "1":
+                        groupTotal = "DEB"
+                        return groupTotal;
+                    case "2":
+                        groupTotal = "CRE"
+                        return groupTotal;
+                }
+            }
         }
 
-        getSectionGr(bclass){
+        getSectionGr(accType){
             var sectionTotal = "";
-            switch (bclass) {
-                case "1":
-                case "2":
-                    sectionTotal = "00"
-                    return sectionTotal;
-                case "3":
-                case "4":
-                case "5":
-                case "6":
-                case "7":
-                case "8":
-                    sectionTotal = "02"
-                    return sectionTotal;
-                default:
-                    return sectionTotal;
+            if(accType=="GL"){//if it is a general ledger account
+                switch (this.bClass) {
+                    case "1":
+                    case "2":
+                        sectionTotal = "00"
+                        return sectionTotal;
+                    case "3":
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                    case "8":
+                        sectionTotal = "02"
+                        return sectionTotal;
+                    default:
+                        return sectionTotal;
+                    }
+            }else{// So if it is a customer or supplier
+                switch (this.bClass) {
+                    case "1":
+                        sectionTotal = "03"
+                        return sectionTotal;
+                    case "2":
+                        sectionTotal = "04"
+                        return sectionTotal;
                 }
+            }
         }
 
-        getSectionDescription(bclass) {
+        getSectionDescription(bClass) {
             var descr = "";
-                switch (bclass) {
+                switch (bClass) {
                     case "1":
                         descr = "EIENDELER"
                         return descr;

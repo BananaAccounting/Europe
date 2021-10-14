@@ -279,7 +279,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:CustomerID>1000</n1:CustomerID>
+				<n1:CustomerID>11000</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>32000</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>0</n1:ClosingDebitBalance>
@@ -332,7 +332,7 @@
 					<n1:BIC>AAAAAAAA</n1:BIC>
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 				</n1:BankAccount>
-				<n1:CustomerID>1001</n1:CustomerID>
+				<n1:CustomerID>11001</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>2000</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>265500</n1:ClosingDebitBalance>
@@ -385,7 +385,7 @@
 					<n1:BIC>n.a</n1:BIC>
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 				</n1:BankAccount>
-				<n1:CustomerID>1002</n1:CustomerID>
+				<n1:CustomerID>11002</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>0.00</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>0.00</n1:ClosingDebitBalance>
@@ -438,7 +438,7 @@
 					<n1:BIC>AAAAAAAA</n1:BIC>
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 				</n1:BankAccount>
-				<n1:CustomerID>1003</n1:CustomerID>
+				<n1:CustomerID>11003</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>100</n1:OpeningDebitBalance>
 				<n1:ClosingCreditBalance>140000</n1:ClosingCreditBalance>
@@ -492,7 +492,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1950</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:CustomerID>1004</n1:CustomerID>
+				<n1:CustomerID>11004</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>0.0</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>10000</n1:ClosingDebitBalance>
@@ -546,7 +546,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:CustomerID>1005</n1:CustomerID>
+				<n1:CustomerID>11005</n1:CustomerID>
 				<n1:AccountID>1500</n1:AccountID>
 				<n1:OpeningDebitBalance>12700</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>0.00</n1:ClosingDebitBalance>
@@ -608,7 +608,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2000</n1:SupplierID>
+				<n1:SupplierID>21000</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningDebitBalance>0</n1:OpeningDebitBalance>
 				<n1:ClosingCreditBalance>0</n1:ClosingCreditBalance>
@@ -664,7 +664,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2001</n1:SupplierID>
+				<n1:SupplierID>21001</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningCreditBalance>6200</n1:OpeningCreditBalance>
 				<n1:ClosingCreditBalance>26825</n1:ClosingCreditBalance>
@@ -720,7 +720,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2002</n1:SupplierID>
+				<n1:SupplierID>21002</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningDebitBalance>0</n1:OpeningDebitBalance>
 				<n1:ClosingCreditBalance>0</n1:ClosingCreditBalance>
@@ -776,7 +776,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2003</n1:SupplierID>
+				<n1:SupplierID>21003</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningCreditBalance>24000</n1:OpeningCreditBalance>
 				<n1:ClosingCreditBalance>24000</n1:ClosingCreditBalance>
@@ -832,7 +832,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2004</n1:SupplierID>
+				<n1:SupplierID>21004</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningDebitBalance>5000.50</n1:OpeningDebitBalance>
 				<n1:ClosingCreditBalance>11499.50</n1:ClosingCreditBalance>
@@ -888,7 +888,7 @@
 					<n1:CurrencyCode>NOK</n1:CurrencyCode>
 					<n1:GeneralLedgerAccountID>1952</n1:GeneralLedgerAccountID>
 				</n1:BankAccount>
-				<n1:SupplierID>2005</n1:SupplierID>
+				<n1:SupplierID>21005</n1:SupplierID>
 				<n1:AccountID>2400</n1:AccountID>
 				<n1:OpeningDebitBalance>0</n1:OpeningDebitBalance>
 				<n1:ClosingDebitBalance>100</n1:ClosingDebitBalance>
@@ -1142,7 +1142,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-04</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Faktura 1155 - Stoff til kosebamser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>12500</n1:Amount>
@@ -1207,7 +1207,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-05</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 66522 - Spinnnervekter</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>6250</n1:Amount>
@@ -1271,7 +1271,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-05</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2003</n1:SupplierID>
+					<n1:SupplierID>21003</n1:SupplierID>
 					<n1:Description>Strøm siste to mnd 2016</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>25000</n1:Amount>
@@ -1333,7 +1333,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-08</n1:ValueDate>
 					<n1:SourceDocumentID>880</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Leie lokaler jan-feb 2017</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>75000</n1:Amount>
@@ -1394,7 +1394,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-12</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>Salg av div leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>440000</n1:Amount>
@@ -1458,7 +1458,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-09</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1000</n1:CustomerID>
+					<n1:CustomerID>11000</n1:CustomerID>
 					<n1:Description>Salg av bamser og spinnere</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>50000</n1:Amount>
@@ -1573,7 +1573,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-14</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Reklameannonser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>62500</n1:Amount>
@@ -1707,7 +1707,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-22</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Råvarer til leketøysproduksjon. Faktnr 20170035</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>31627.50</n1:Amount>
@@ -1748,7 +1748,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-23</n1:ValueDate>
 					<n1:SourceDocumentID>234</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>betaling kundefaktura</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>400000</n1:Amount>
@@ -1759,7 +1759,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-23</n1:ValueDate>
 					<n1:SourceDocumentID>234</n1:SourceDocumentID>
-					<n1:CustomerID>1003</n1:CustomerID>
+					<n1:CustomerID>11003</n1:CustomerID>
 					<n1:Description>betaling kundefaktura og utestående nov.</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>140100</n1:Amount>
@@ -1790,7 +1790,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-27</n1:ValueDate>
 					<n1:SourceDocumentID>1230</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>62600</n1:Amount>
@@ -1801,7 +1801,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-27</n1:ValueDate>
 					<n1:SourceDocumentID>1231</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>37877.50</n1:Amount>
@@ -1812,7 +1812,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-27</n1:ValueDate>
 					<n1:SourceDocumentID>1232</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>75000</n1:Amount>
@@ -1873,7 +1873,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-27</n1:ValueDate>
 					<n1:SourceDocumentID>14</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>Salg av leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>203648.75</n1:Amount>
@@ -1940,7 +1940,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-31</n1:ValueDate>
 					<n1:SourceDocumentID>124</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Leie maskiner januar</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>20625.00</n1:Amount>
@@ -1995,7 +1995,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-01-04</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 1235 - Neser og øyer til bamser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>15000</n1:Amount>
@@ -2060,7 +2060,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-05</n1:ValueDate>
 					<n1:SourceDocumentID>834</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 632 - Ferdiglakkerte treklosser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>21000</n1:Amount>
@@ -2117,7 +2117,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-06</n1:ValueDate>
 					<n1:SourceDocumentID>5</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Emballasje med logo</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>5125</n1:Amount>
@@ -2174,7 +2174,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-08</n1:ValueDate>
 					<n1:SourceDocumentID>605</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Arbeidstøy, nye kampanje t-skjorter</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>873.75</n1:Amount>
@@ -2245,7 +2245,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-02-12</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1004</n1:CustomerID>
+					<n1:CustomerID>11004</n1:CustomerID>
 					<n1:Description>Salg av leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>384500</n1:Amount>
@@ -2309,7 +2309,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-02-09</n1:ValueDate>
 					<n1:SourceDocumentID>77</n1:SourceDocumentID>
-					<n1:CustomerID>1005</n1:CustomerID>
+					<n1:CustomerID>11005</n1:CustomerID>
 					<n1:Description>Salg av Babyleker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>77750.00</n1:Amount>
@@ -2401,7 +2401,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-02-23</n1:ValueDate>
 					<n1:SourceDocumentID>234</n1:SourceDocumentID>
-					<n1:CustomerID>1004</n1:CustomerID>
+					<n1:CustomerID>11004</n1:CustomerID>
 					<n1:Description>Innbetalinger bank</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>384500</n1:Amount>
@@ -2412,7 +2412,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-02-23</n1:ValueDate>
 					<n1:SourceDocumentID>234</n1:SourceDocumentID>
-					<n1:CustomerID>1000</n1:CustomerID>
+					<n1:CustomerID>11000</n1:CustomerID>
 					<n1:Description>Innbetalinger bank</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>50000</n1:Amount>
@@ -2443,7 +2443,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-27</n1:ValueDate>
 					<n1:SourceDocumentID>1237</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>12500</n1:Amount>
@@ -2454,7 +2454,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-27</n1:ValueDate>
 					<n1:SourceDocumentID>1238</n1:SourceDocumentID>
-					<n1:SupplierID>2003</n1:SupplierID>
+					<n1:SupplierID>21003</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>25000</n1:Amount>
@@ -2465,7 +2465,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-27</n1:ValueDate>
 					<n1:SourceDocumentID>1239</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>41250</n1:Amount>
@@ -2526,7 +2526,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-02-27</n1:ValueDate>
 					<n1:SourceDocumentID>14</n1:SourceDocumentID>
-					<n1:CustomerID>1002</n1:CustomerID>
+					<n1:CustomerID>11002</n1:CustomerID>
 					<n1:Description>Salg av leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>154000</n1:Amount>
@@ -2593,7 +2593,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-28</n1:ValueDate>
 					<n1:SourceDocumentID>124</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Leie maskiner feb.</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>20625.00</n1:Amount>
@@ -2624,7 +2624,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-28</n1:ValueDate>
 					<n1:SourceDocumentID>1237</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>36000</n1:Amount>
@@ -2635,7 +2635,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-28</n1:ValueDate>
 					<n1:SourceDocumentID>1238</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>5125</n1:Amount>
@@ -2666,7 +2666,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-01</n1:ValueDate>
 					<n1:SourceDocumentID>235</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>Innbetalinger fra kunder</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>243648.75</n1:Amount>
@@ -2677,7 +2677,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-01</n1:ValueDate>
 					<n1:SourceDocumentID>235</n1:SourceDocumentID>
-					<n1:CustomerID>1005</n1:CustomerID>
+					<n1:CustomerID>11005</n1:CustomerID>
 					<n1:Description>Innbetalinger faktura februar og utestående fra desember</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>90450</n1:Amount>
@@ -2688,7 +2688,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-01</n1:ValueDate>
 					<n1:SourceDocumentID>235</n1:SourceDocumentID>
-					<n1:CustomerID>1002</n1:CustomerID>
+					<n1:CustomerID>11002</n1:CustomerID>
 					<n1:Description>Innbetaling fra kunde</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>154000</n1:Amount>
@@ -2699,7 +2699,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-01</n1:ValueDate>
 					<n1:SourceDocumentID>235</n1:SourceDocumentID>
-					<n1:CustomerID>1000</n1:CustomerID>
+					<n1:CustomerID>11000</n1:CustomerID>
 					<n1:Description>Innbetalinger etter purring, utestående fra 2016</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>32000</n1:Amount>
@@ -2754,7 +2754,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-02</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 1175 - gummi</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>28812.50</n1:Amount>
@@ -2819,7 +2819,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-04</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 10065 - Bambustre</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>12500</n1:Amount>
@@ -2883,7 +2883,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-08</n1:ValueDate>
 					<n1:SourceDocumentID>1288</n1:SourceDocumentID>
-					<n1:SupplierID>2003</n1:SupplierID>
+					<n1:SupplierID>21003</n1:SupplierID>
 					<n1:Description>Strøm jan feb. 2017</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>25000</n1:Amount>
@@ -2945,7 +2945,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-08</n1:ValueDate>
 					<n1:SourceDocumentID>884</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Leie lokaler 03-04.2017</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>75000</n1:Amount>
@@ -3006,7 +3006,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-10</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1003</n1:CustomerID>
+					<n1:CustomerID>11003</n1:CustomerID>
 					<n1:Description>Salg av div leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>428750</n1:Amount>
@@ -3063,7 +3063,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-11</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1000</n1:CustomerID>
+					<n1:CustomerID>11000</n1:CustomerID>
 					<n1:Description>Salg av klosser</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>112500</n1:Amount>
@@ -3178,7 +3178,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-13</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Reklame annonser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>15000</n1:Amount>
@@ -3325,7 +3325,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-16</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Kontorstoler. Faktnr 2017-651</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>16250</n1:Amount>
@@ -3366,7 +3366,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-18</n1:ValueDate>
 					<n1:SourceDocumentID>237</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>betaling faktura</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>203648.75</n1:Amount>
@@ -3377,7 +3377,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-18</n1:ValueDate>
 					<n1:SourceDocumentID>237</n1:SourceDocumentID>
-					<n1:CustomerID>1000</n1:CustomerID>
+					<n1:CustomerID>11000</n1:CustomerID>
 					<n1:Description>betaling faktura</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>112500</n1:Amount>
@@ -3388,7 +3388,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-03-16</n1:ValueDate>
 					<n1:SourceDocumentID>237</n1:SourceDocumentID>
-					<n1:CustomerID>1003</n1:CustomerID>
+					<n1:CustomerID>11003</n1:CustomerID>
 					<n1:Description>betaling faktura</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>428750</n1:Amount>
@@ -3419,7 +3419,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-19</n1:ValueDate>
 					<n1:SourceDocumentID>1233</n1:SourceDocumentID>
-					<n1:SupplierID>2005</n1:SupplierID>
+					<n1:SupplierID>21005</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>15000</n1:Amount>
@@ -3430,7 +3430,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-19</n1:ValueDate>
 					<n1:SourceDocumentID>1233</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>28812.50</n1:Amount>
@@ -3441,7 +3441,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-19</n1:ValueDate>
 					<n1:SourceDocumentID>1233</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>75000</n1:Amount>
@@ -3452,7 +3452,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-19</n1:ValueDate>
 					<n1:SourceDocumentID>1233</n1:SourceDocumentID>
-					<n1:SupplierID>2003</n1:SupplierID>
+					<n1:SupplierID>21003</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>25000</n1:Amount>
@@ -3463,7 +3463,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-19</n1:ValueDate>
 					<n1:SourceDocumentID>1233</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>873.75</n1:Amount>
@@ -3524,7 +3524,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-01-27</n1:ValueDate>
 					<n1:SourceDocumentID>14</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>Salg av leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>203648.75</n1:Amount>
@@ -3591,7 +3591,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-03-30</n1:ValueDate>
 					<n1:SourceDocumentID>125</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Leie maskiner mars</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>20625.00</n1:Amount>
@@ -3646,7 +3646,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-04</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Faktura 1253 - Deler til bamser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>10000</n1:Amount>
@@ -3711,7 +3711,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-05</n1:ValueDate>
 					<n1:SourceDocumentID>834</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Faktura 638 - Ferdiglakkerte treklosser</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>27500</n1:Amount>
@@ -3768,7 +3768,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-06</n1:ValueDate>
 					<n1:SourceDocumentID>500</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Div deler leker</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>62500</n1:Amount>
@@ -3895,7 +3895,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-04-09</n1:ValueDate>
 					<n1:SourceDocumentID>1234</n1:SourceDocumentID>
-					<n1:CustomerID>1002</n1:CustomerID>
+					<n1:CustomerID>11002</n1:CustomerID>
 					<n1:Description>Salg av leker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>455000</n1:Amount>
@@ -3959,7 +3959,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-04-12</n1:ValueDate>
 					<n1:SourceDocumentID>78</n1:SourceDocumentID>
-					<n1:CustomerID>1004</n1:CustomerID>
+					<n1:CustomerID>11004</n1:CustomerID>
 					<n1:Description>Salg av Babyleker</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>122125.00</n1:Amount>
@@ -4051,7 +4051,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-04-14</n1:ValueDate>
 					<n1:SourceDocumentID>239</n1:SourceDocumentID>
-					<n1:CustomerID>1004</n1:CustomerID>
+					<n1:CustomerID>11004</n1:CustomerID>
 					<n1:Description>Innbetalinger bank</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>112125</n1:Amount>
@@ -4062,7 +4062,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-04-14</n1:ValueDate>
 					<n1:SourceDocumentID>239</n1:SourceDocumentID>
-					<n1:CustomerID>1002</n1:CustomerID>
+					<n1:CustomerID>11002</n1:CustomerID>
 					<n1:Description>Innbetalinger bank</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>455000</n1:Amount>
@@ -4093,7 +4093,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-19</n1:ValueDate>
 					<n1:SourceDocumentID>1237</n1:SourceDocumentID>
-					<n1:SupplierID>2000</n1:SupplierID>
+					<n1:SupplierID>21000</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>16250</n1:Amount>
@@ -4104,7 +4104,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-19</n1:ValueDate>
 					<n1:SourceDocumentID>1238</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>20625</n1:Amount>
@@ -4115,7 +4115,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-19</n1:ValueDate>
 					<n1:SourceDocumentID>1239</n1:SourceDocumentID>
-					<n1:SupplierID>2002</n1:SupplierID>
+					<n1:SupplierID>21002</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>10000</n1:Amount>
@@ -4126,7 +4126,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-02-19</n1:ValueDate>
 					<n1:SourceDocumentID>1239</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>23500</n1:Amount>
@@ -4187,7 +4187,7 @@
 					<n1:AccountID>1500</n1:AccountID>
 					<n1:ValueDate>2017-04-24</n1:ValueDate>
 					<n1:SourceDocumentID>14</n1:SourceDocumentID>
-					<n1:CustomerID>1001</n1:CustomerID>
+					<n1:CustomerID>11001</n1:CustomerID>
 					<n1:Description>Salg til Leker på Nett</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>263500</n1:Amount>
@@ -4254,7 +4254,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-27</n1:ValueDate>
 					<n1:SourceDocumentID>127</n1:SourceDocumentID>
-					<n1:SupplierID>2001</n1:SupplierID>
+					<n1:SupplierID>21001</n1:SupplierID>
 					<n1:Description>Leie maskiner apr</n1:Description>
 					<n1:CreditAmount>
 						<n1:Amount>20625.00</n1:Amount>
@@ -4285,7 +4285,7 @@
 					<n1:AccountID>2400</n1:AccountID>
 					<n1:ValueDate>2017-04-30</n1:ValueDate>
 					<n1:SourceDocumentID>1240</n1:SourceDocumentID>
-					<n1:SupplierID>2004</n1:SupplierID>
+					<n1:SupplierID>21004</n1:SupplierID>
 					<n1:Description>Remittering bank</n1:Description>
 					<n1:DebitAmount>
 						<n1:Amount>62500</n1:Amount>

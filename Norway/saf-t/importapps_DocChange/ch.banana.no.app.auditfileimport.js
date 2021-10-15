@@ -41,6 +41,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         this.bClass = "";
         this.accType = "";
         this.transId = "";
+        this.analysisType="";
 
         //errors
         this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
@@ -98,9 +99,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             this.createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, supplierNode, 'n1:Supplier');
 
             /*********************************************************************
+             * ADD THE COST AND PROFIT CENTERS
+            *********************************************************************/
+            this.createJsonDocument_AddCostandProfitCenters(jsonDoc, srcFileName, masterFilesNode);
+
+            /*********************************************************************
              * ADD THE TRANSACTIONS
              *********************************************************************/
-            this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName);
+            this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, srcFileName);
             // se non è la versione giusta, avverto che l'importazione delle registrazioni è limitata a 100 righe
             if (!this.isAdvanced) {
                 var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID, lang);
@@ -120,6 +126,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         this.jsonDocArray.push(jsonDoc);
 
     }
+    /**
+     * create the json structure to add the company information in the properties of the banana file
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} headerNode node from which I start deriving the values 
+     */
     createJsonDocument_AddFileProperties(jsonDoc, srcFileName, headerNode) {
 
         var rows = [];
@@ -158,8 +170,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     }
 
     /**
-     * 
-     * @param {*} companyNode the xml company node
+     * retrieves company information from the xml file and saves it
+     * @param {*} headerNode the xml company node
      * @returns the values i want to put in the file properties fields
      */
     getCompanyInfo(headerNode) {
@@ -238,8 +250,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     }
 
     /**
-     * 
-     * @returns the list of the file properties fields i want to modify/add
+     * sets the fields to be modified in the file header
+     * @returns 
      */
     getFileInfoFields() {
         var propertyFields = [];
@@ -261,6 +273,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
+    /**
+     * 
+     * create the json structure to add the vat codes in the vat table
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} headerNode node from which I start deriving the values 
+     */
     createJsonDocument_AddVatCodes(jsonDoc, srcFileName, masterFilesNode) {
         var rows = [];
         var vatCodesNode = "";
@@ -311,7 +330,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
-    createJsonDocument_AddTransactions(jsonDoc, xmlRoot, companyNode, srcFileName) {
+    /**
+     * create the json structure to add the transactions in the transactions table
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} xmlRoot node from which I start deriving the values 
+     */
+    createJsonDocument_AddTransactions(jsonDoc, xmlRoot, srcFileName) {
 
 
         var rows = [];
@@ -349,6 +374,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     var description = "";
                     var amount = "";
                     var vatId = "";
+                    var analysisNode="";
+                    //array for the cc (maximum of 3)
+                    var analysisIDElements=[];
 
                     if (lineNode.hasChildElements('n1:RecordID')) {
                         recordId = lineNode.firstChildElement('n1:RecordID').text;
@@ -399,6 +427,25 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                         transactionDescription = description;
                     }
 
+                    //Retrieve within the analysis tag, information on cost centres 
+                    analysisNode=lineNode.firstChildElement('n1:Analysis');
+
+                    while(analysisNode){
+                        var analysisType=analysisNode.firstChildElement('n1:AnalysisType').text
+                        var analysisID=analysisNode.firstChildElement('n1:AnalysisID').text;
+                        if(analysisNode.hasChildElements('n1:AnalysisAmount'))
+                        var analysisAmount=analysisNode.firstChildElement('n1:AnalysisAmount');
+
+                        //if two CC are from the same level, it is necessary to split the transaction in two different rows, so the amount will be modified
+                        if(this.analysisType==analysisType){
+                            var newRow=this.getNewTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,analysisAmount,vatId);
+                            rows.push(newRow);
+                            amount=amount-analysisAmount;
+                        }
+                        this.analysisType=analysisType;
+                        analysisNode = analysisNode.nextSiblingElement('n1:Analysis'); // next analysis line
+                    }
+
                     var row = {};
                     row.operation = {};
                     row.operation.name = "add";
@@ -411,7 +458,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     row.fields["AccountCredit"] = transactionCreditAccount;
                     row.fields["Amount"] = amount;
                     row.fields["VatCode"] = vatId;
-                    //row.fields["VatCode"] = "["+trLineVatId+"]";
+                    row.fields["Cc1"] = analysisIDElements[0];
+                    row.fields["Cc2"] = analysisIDElements[1];
+                    row.fields["Cc3"] = analysisIDElements[2];
 
 
                     rows.push(row);
@@ -448,11 +497,91 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     }
 
     /**
-     * returns the accounts to add
-     * @param {*} jsonDoc 
-     * @param {*} srcFileName 
-     * @param {*} masterFilesNode 
-     * @returns 
+     * create the json structure to add the cost and profit centers in the Accounts table
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} masterFilesNode node from which I start deriving the values 
+     */
+    createJsonDocument_AddCostandProfitCenters(jsonDoc, srcFileName, masterFilesNode){
+        if (!masterFilesNode)
+        return "";
+
+        var rows = [];
+        var AnalysisTypeTable = ""
+        var AnalysisTypeTableEntry = "";
+        var costAndProfitCenterNumber=0;
+        var costAndProfitCenterPrefix=".";
+
+        AnalysisTypeTable = masterFilesNode.firstChildElement('n1:AnalysisTypeTable');
+        AnalysisTypeTableEntry = AnalysisTypeTable.firstChildElement('n1:AnalysisTypeTableEntry');
+
+        while (AnalysisTypeTableEntry) {
+
+            var analysisType = "";
+            var analysisTypeDescription = "";
+            var analysisID = "";
+            var analysisIDDescription= "";
+
+            //each of these entries is mandatory within the node
+
+            analysisType=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisType').text;
+            analysisTypeDescription=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisTypeDescription').text;
+            analysisID=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisID').text;
+            analysisIDDescription=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisIDDescription').text;
+
+            if(this.gr !==analysisType){
+                var grRows = this.getGroupRow();
+                rows.push(grRows.row);
+                rows.push(grRows.emptyRow);
+                //ogni volta che cambia gruppo significa che ho un centro di costo nuovo (per un massimo di tre)
+                costAndProfitCenterNumber++
+                costAndProfitCenterPrefix=this.setCCPrefix(costAndProfitCenterNumber);
+            }
+
+            var row = {};
+            row.operation = {};
+            row.operation.name = "add";
+            row.operation.srcFileName = srcFileName;
+            row.fields = {};
+            row.fields["Account"] = costAndProfitCenterPrefix+analysisID;
+            row.fields["Description"] = analysisIDDescription;
+            row.fields["Gr"] = analysisType;
+
+
+            rows.push(row);
+
+            this.gr = analysisType;
+
+            AnalysisTypeTableEntry = AnalysisTypeTableEntry.nextSiblingElement('n1:AnalysisTypeTableEntry');
+
+        }
+
+        var grRows = this.getGroupRow();
+        rows.push(grRows.row);
+        rows.push(grRows.emptyRow);
+
+        this.gr="";
+
+
+        var dataUnitFilePorperties = {};
+        dataUnitFilePorperties.nameXml = "Accounts";
+        dataUnitFilePorperties.data = {};
+        dataUnitFilePorperties.data.rowLists = [];
+        dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+
+        // Banana.Ui.showText(JSON.stringify(dataUnitFilePorperties));
+
+        jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+
+    }
+
+
+
+    /**
+     * create the json structure to add the accounts in the Accounts table
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} masterFilesNode node from which I start deriving the values 
      */
     createJsonDocument_AddAccounts(jsonDoc, srcFileName, masterFilesNode) {
 
@@ -512,7 +641,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             //if the group change, we create a grouping row, same with the bclass
             if (this.gr != gr) {
                 //carried over groups
-                var grCarriedOver = this.getGroupCarriedOver(this.gr);
+                var grCarriedOver = this.setGroupCarriedOver(this.gr);
                 var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver);
                 rows.push(grCarrOverRows.row);
                 //normal groups
@@ -570,6 +699,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         rows.push(balanceDiff.row);
         rows.push(balanceDiff.emptyRow);
 
+        this.bclass="";
+        this.gr="";
+
 
         var dataUnitFilePorperties = {};
         dataUnitFilePorperties.nameXml = "Accounts";
@@ -584,6 +716,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
+    /**
+     * create the json structure to add the customers and suppliers in the Accounts table
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} masterFilesNode node from which I start deriving the values 
+     */
     createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, xmlNode, xmlTagName) {
 
         var rows = [];
@@ -712,6 +850,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         rows.push(secRows.row);
         rows.push(secRows.emptyRow);
 
+        this.bClass="";
+
         var dataUnitFilePorperties = {};
         dataUnitFilePorperties.nameXml = "Accounts";
         dataUnitFilePorperties.data = {};
@@ -722,7 +862,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
 
     }
-
+    /**
+     * sets the account type for customers and suppliers
+     * @param {*} accountId 
+     * @returns 
+     */
     setAccountType(accountId) {
         var accType = "";
         if (accountId.substr(0, 1) == "2")
@@ -732,7 +876,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return accType
     }
 
-
+    /**
+     * sets the account type for customers and suppliers
+     * @param {*} bClass 
+     * @returns 
+     */
     setCSGrByBclass(bClass) {
         var gr = "";
         switch (bClass) {
@@ -747,6 +895,35 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         }
     }
 
+    /**
+     * Creates a new Row if there is a record with two cost centres of the same level
+     * @returns 
+     */
+    getNewTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,amount,vatId){
+
+        var row = {};
+        row.operation = {};
+        row.operation.name = "add";
+        row.fields = {};
+        row.fields["Date"] = trDate;
+        row.fields["Doc"] = trId;
+        row.fields["Description"] = transactionDescription;
+        row.fields["AccountDebit"] = transactionDebitAccount;
+        row.fields["AccountCredit"] = transactionCreditAccount;
+        row.fields["Amount"] = amount;
+        row.fields["VatCode"] = vatId;
+        row.fields["Cc1"] = "";
+        row.fields["Cc2"] = "";
+        row.fields["Cc3"] = "";
+
+        return row;
+    }
+
+    /**
+     * creates a grouping row 
+     * @param {*} accType 
+     * @returns 
+     */
     getGroupRow(accType) {
         var grRows = {};
         if (!this.gr)
@@ -756,14 +933,18 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         grRows.row.operation.name = "add";
         grRows.row.fields = {};
         grRows.row.fields["Group"] = this.gr;
-        grRows.row.fields["Description"] = this.getGroupDescription();
-        grRows.row.fields["Gr"] = this.getGroupTotal(accType);
+        grRows.row.fields["Description"] = this.setGroupDescription();
+        grRows.row.fields["Gr"] = this.setGroupTotal(accType);
         grRows.emptyRow = this.getEmptyRow();
 
         return grRows;
     }
 
-    getGroupCarriedOver() {
+    /**
+     * sets the groups to be reported in the balance
+     * @returns 
+     */
+    setGroupCarriedOver() {
         var grCarriedOver = {};
         switch (this.gr) {
             //verificare di prendere il gruppo corretto
@@ -771,19 +952,37 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 grCarriedOver.gr = "0511"
                 grCarriedOver.description = "ÅRSRESULTAT"
                 return grCarriedOver;
-            case "15": //gruppo 15 = Crediti a breve termine
-                grCarriedOver.gr = "03"
-                grCarriedOver.description = "EIENDELER"
-                return grCarriedOver;
-            case "24": //gruppo 24 = Tassa del fornitore (Leverandørgjeld)
-                grCarriedOver.gr = "04"
-                grCarriedOver.description = "EGENKAPITAL OG GJELD"
-                return grCarriedOver;
-            default:
-                return null;
         }
     }
 
+    /**
+     * sets the cost centre prefix depending on how many cost centres already exist. in banana you can have up to three cost centres
+     * @param {*} costAndProfitCenterNumber counter saving the number of existing cost centres
+     * @returns 
+     */
+    setCCPrefix(costAndProfitCenterNumber){
+        var prefix="";
+        switch(costAndProfitCenterNumber){
+            case  1:
+                prefix ="."
+                return prefix;
+            case  2:
+                prefix =","
+                return prefix;
+            case  3:
+                prefix =";"
+                return prefix;
+            //aggiungere messaggio di errore    
+            default:
+                return "Too many CC, max 3 ";
+        }
+    }
+
+    /**
+     * creates a carried overgrouping row
+     * @param {*} grCarriedOver 
+     * @returns 
+     */
     getGroupRow_carriedOver(grCarriedOver) {
         var grRows = {};
         if (grCarriedOver != null) {
@@ -798,28 +997,37 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return grRows;
     }
 
+    /**
+     * creates a section row
+     * @param {*} accType 
+     * @returns 
+     */
     getSectionRow(accType) {
         var secRows = {};
         secRows.row = {};
         secRows.row.operation = {};
         secRows.row.operation.name = "add";
         secRows.row.fields = {};
-        secRows.row.fields["Group"] = this.getGroupTotal(accType);
-        secRows.row.fields["Description"] = this.getSectionDescription(this.bClass);
-        secRows.row.fields["Gr"] = this.getSectionGr(accType);
+        secRows.row.fields["Group"] = this.setGroupTotal(accType);
+        secRows.row.fields["Description"] = this.SetSectionDescription(this.bClass);
+        secRows.row.fields["Gr"] = this.setSectionGr(accType);
         //create an empty row to append after the total row
         secRows.emptyRow = this.getEmptyRow();
         return secRows;
     }
 
-    /**
-     * 
-     * @param {*} bClass element bclass
-     * @param {*} PreviousAccType B if it an element from balance, C or S it's for customer and suppliers (i set this value manually,  it is not an information in the xml file)
-     * @returns 
-     */
-    getGroupTotal(accType) {
+/**
+ * Sets the column gr (sumIn) to the grouping row of the group, taking the class as criterion
+ * @param {*} accType account type, GL (general ledger) indicates an account belonging to the balance sheet or the profit and loss account.
+ * if it is nota GL type is a customero supplier account.
+ * @returns 
+ */
+    setGroupTotal(accType) {
         var groupTotal = "";
+
+        if(!accType)
+            return groupTotal
+
         if (accType == "GL") { //if it is a general ledger account
             switch (this.bClass) {
                 case "1":
@@ -855,7 +1063,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         }
     }
 
-    getSectionGr(accType) {
+    /**
+     * Sets the column gr (sumIn) to the grouping row of the section, taking as criteria the class
+     * @param {*} accType account type, GL (general ledger) indicates an account belonging to the balance sheet or the profit and loss account 
+     * @returns 
+     */
+    setSectionGr(accType) {
         var sectionTotal = "";
         if (accType == "GL") { //if it is a general ledger account
             switch (this.bClass) {
@@ -874,19 +1087,16 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 default:
                     return sectionTotal;
             }
-        } else { // So if it is a customer or supplier
-            switch (this.bClass) {
-                case "1":
-                    sectionTotal = "03"
-                    return sectionTotal;
-                case "2":
-                    sectionTotal = "04"
-                    return sectionTotal;
-            }
+        }else{
+            return sectionTotal;
         }
     }
 
-    getGroupDescription() {
+    /**
+     * sets the description of the grouping depending on the group
+     * @returns the grouping description
+     */
+    setGroupDescription() {
         var descr = "";
         //set only the groups that are not signed as free: http://www.eholding.no/regnskap/norsk-standard-kontoplan.htm
         switch (this.gr) {
@@ -1110,9 +1320,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         }
     }
 
-    getSectionDescription(bClass) {
+    /**
+     * sets the description of the section depending on the class
+     * @returns the section's description
+     */
+    SetSectionDescription() {
         var descr = "";
-        switch (bClass) {
+        switch (this.bClass) {
             case "1":
                 descr = "EIENDELER"
                 return descr;
@@ -1135,7 +1349,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 return descr;
         }
     }
-
+    /**
+     * creates the line for the profit and loss account result
+     * @returns 
+     */
     getTotCeRow() {
         var ceRows = {};
         ceRows.row = {};
@@ -1149,6 +1366,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return ceRows;
     }
 
+    /**
+     * creates the line for the budget result
+     * @returns 
+     */
     getBalanceDiff() {
         var balanceRows = {};
         balanceRows.row = {};
@@ -1161,6 +1382,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         return balanceRows;
     }
+    /**
+     * creates an empty row
+     * @returns
+     */
     getEmptyRow() {
         var emptyRow = {};
         emptyRow.operation = {};
@@ -1200,6 +1425,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return bclass;
     }
 
+    /**
+     * initialises the structure of the json object
+     * @returns 
+     */
     createJsonDocument_Init() {
 
         var jsonDoc = {};

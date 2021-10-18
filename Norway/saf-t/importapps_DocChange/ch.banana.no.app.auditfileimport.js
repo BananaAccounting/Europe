@@ -37,6 +37,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         this.isAdvanced = this.isBananaAdvanced();
         this.banDocument = banDocument;
         this.jsonDocArray = [];
+        this.ccList=[];
         this.gr = "";
         this.bClass = "";
         this.accType = "";
@@ -101,7 +102,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             /*********************************************************************
              * ADD THE COST AND PROFIT CENTERS
             *********************************************************************/
-            this.createJsonDocument_AddCostandProfitCenters(jsonDoc, srcFileName, masterFilesNode);
+           //attualmente disabilitato
+            //this.createJsonDocument_AddCostandProfitCenters(jsonDoc, srcFileName, masterFilesNode);
 
             /*********************************************************************
              * ADD THE TRANSACTIONS
@@ -340,6 +342,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
 
         var rows = [];
+        var ccList=this.ccList;
 
         var generalLedgerEntriesNode = xmlRoot.firstChildElement('n1:GeneralLedgerEntries');
         var journalNode = generalLedgerEntriesNode.firstChildElement('n1:Journal');
@@ -375,7 +378,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     var amount = "";
                     var vatId = "";
                     var analysisNode="";
-                    //array for the cc (maximum of 3)
+                    var arrIndex="";
                     var analysisIDElements=[];
 
                     if (lineNode.hasChildElements('n1:RecordID')) {
@@ -427,7 +430,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                         transactionDescription = description;
                     }
 
-                    //Retrieve within the analysis tag, information on cost centres 
+                    //Retrieve within the analysis tag, information on cost centres, ATTUALMENTE DISABILITATO
+                    /*
                     analysisNode=lineNode.firstChildElement('n1:Analysis');
 
                     while(analysisNode){
@@ -436,15 +440,23 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                         if(analysisNode.hasChildElements('n1:AnalysisAmount'))
                         var analysisAmount=analysisNode.firstChildElement('n1:AnalysisAmount');
 
+                        for (var i = 0; i < ccList.length; i++) {
+                            if (ccList[i].split("_____")[0] === analysisType) {
+                                arrIndex = ccList[i].split("_____")[1];
+                            }
+                        }
+
+                        analysisIDElements[arrIndex]=analysisID;
+
                         //if two CC are from the same level, it is necessary to split the transaction in two different rows, so the amount will be modified
-                        if(this.analysisType==analysisType){
-                            var newRow=this.getNewTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,analysisAmount,vatId);
+                       /* if(this.analysisType==analysisType){
+                            var newRow=this.getNewCCTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,analysisAmount,vatId,analysisIDElements);
                             rows.push(newRow);
                             amount=amount-analysisAmount;
                         }
                         this.analysisType=analysisType;
                         analysisNode = analysisNode.nextSiblingElement('n1:Analysis'); // next analysis line
-                    }
+                    }*/
 
                     var row = {};
                     row.operation = {};
@@ -529,7 +541,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             analysisID=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisID').text;
             analysisIDDescription=AnalysisTypeTableEntry.firstChildElement('n1:AnalysisIDDescription').text;
 
-            if(this.gr !==analysisType){
+
+            if(this.gr !==analysisType && this.gr!==""){
                 var grRows = this.getGroupRow();
                 rows.push(grRows.row);
                 rows.push(grRows.emptyRow);
@@ -537,6 +550,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 costAndProfitCenterNumber++
                 costAndProfitCenterPrefix=this.setCCPrefix(costAndProfitCenterNumber);
             }
+
+            /**
+             * save the index_type combination in an array for later use in the transactions, where I will assign the correct cost centre column.
+            */
+            this.ccList.push(analysisType+ "_____"+costAndProfitCenterNumber);
 
             var row = {};
             row.operation = {};
@@ -589,7 +607,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             return "";
 
         var rows = [];
-        var GeneralLedgerAccountsNode = ""
+        var GeneralLedgerAccountsNode = "";
         var accountNode = "";
 
         GeneralLedgerAccountsNode = masterFilesNode.firstChildElement('n1:GeneralLedgerAccounts');
@@ -899,7 +917,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * Creates a new Row if there is a record with two cost centres of the same level
      * @returns 
      */
-    getNewTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,amount,vatId){
+     getNewCCTransactionRow(trDate,trId,transactionDescription,transactionDebitAccount,transactionCreditAccount,amount,vatId,analysisIDElements){
 
         var row = {};
         row.operation = {};
@@ -912,9 +930,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         row.fields["AccountCredit"] = transactionCreditAccount;
         row.fields["Amount"] = amount;
         row.fields["VatCode"] = vatId;
-        row.fields["Cc1"] = "";
-        row.fields["Cc2"] = "";
-        row.fields["Cc3"] = "";
+        row.fields["Cc1"] = analysisIDElements[0];
+        row.fields["Cc2"] = analysisIDElements[1];
+        row.fields["Cc3"] = analysisIDElements[2];
 
         return row;
     }
@@ -964,12 +982,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var prefix="";
         switch(costAndProfitCenterNumber){
             case  1:
-                prefix ="."
-                return prefix;
-            case  2:
                 prefix =","
                 return prefix;
-            case  3:
+            case  2:
                 prefix =";"
                 return prefix;
             //aggiungere messaggio di errore    

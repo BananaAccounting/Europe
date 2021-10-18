@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+    <file>ch.banana.no.app.auditfileimport.js</file>
+    <file>ch.banana.no.app.auditfileimport.qrc</file>
+    <file>createinit.js</file>
+    <file>createlocate.json</file>
+    <file>manifest.json</file>
+ </qresource>
+</RCC>

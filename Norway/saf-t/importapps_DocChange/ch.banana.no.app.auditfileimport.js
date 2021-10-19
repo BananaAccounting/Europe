@@ -20,8 +20,6 @@
 // @doctype = *
 // @encoding = utf-8
 // @task = import.file
-// @outputformat = tablewithheaders
-// @inputdatasource = openfiledialog
 // @inputencoding = utf-8
 // @inputfilefilter = XML files (*.xml);;All files (*.*)
 

@@ -10,7 +10,7 @@
         "uri": "creator.js"
     },
     "xml": {
-        "namespace": "http://www.w3.org/2001/XMLSchema-instance",
-        "rootItem": "n1:AuditFile"
+        "namespace": "urn:StandardAuditFile-Taxation-Financial:NO",
+        "rootItem": "AuditFile"
     }
 }

@@ -10,8 +10,8 @@
         "uri": "ch.banana.no.app.auditfileimport.sbaa/createinit.js"
     },
     "xml": {
-        "namespace": "http://www.w3.org/2001/XMLSchema-instance",
-        "rootItem": "n1:AuditFile"
+        "namespace": "urn:StandardAuditFile-Taxation-Financial:NO",
+        "rootItem": "AuditFile"
     },
     "type": "text/json",
     "version": "1.0"

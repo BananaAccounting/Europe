@@ -14,9 +14,9 @@
 //
 // @id = createinit
 // @api = 1.0
-// @pubdate = 2021-10-01
+// @pubdate = 2021-10-19
 // @publisher = Banana.ch SA
-// @description = Create Init for importing Netherland XML Audit Files
+// @description = Create Init for importing Norway XML Audit Files
 // @task = create.init
 // @doctype = *
 
@@ -34,11 +34,11 @@ function exec(inData) {
         },
         "scriptImport": {
             "function": "exec",
-            "uri": "ch.banana.no.app.auditfileimport.sbaa/ch.banana.no.app.auditfileimport"
+            "uri": "ch.banana.no.app.auditfileimport.sbaa/ch.banana.no.app.auditfileimport" 
         },
         "scriptSetup": {
             "function": "setup",
-            "uri": "ch.banana.no.app.auditfileimport.sbaa/ch.banana.nl.app.auditfileimport"
+            "uri": "ch.banana.no.app.auditfileimport.sbaa/ch.banana.no.app.auditfileimport"
         },
     };
 

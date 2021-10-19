@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.no.app.auditfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-11
+// @pubdate = 2021-10-19
 // @publisher = Banana.ch SA
 // @description = Norway Import Audit File (BETA)
 // @doctype = *
@@ -43,10 +43,20 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         this.accType = "";
         this.transId = "";
         this.analysisType="";
+        this.openingCreditBalance="";
+        this.openingDebitBalance="",
+        this.closingDebitBalance="";
+        this.closingCreditBalance="";
+        this.transTotalCredit="";
+        this.transTotalDebit="";
 
         //errors
         this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
         this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
+        this.ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES="ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES";
+        this.ID_ERR_TRANSACTIONS_DEBIT_CREDIT_WITH_DIFFERENCES="ID_ERR_TRANSACTIONS_DEBIT_CREDIT_WITH_DIFFERENCES";
+        this.ID_ERR_CLOSING_DEBIT_CREDIT_WITH_DIFFERENCES="ID_ERR_CLOSING_DEBIT_CREDIT_WITH_DIFFERENCES";
+        
 
     }
 
@@ -85,6 +95,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
              * ADD THE ACCOUNTS
              *********************************************************************/
             this.createJsonDocument_AddAccounts(jsonDoc, srcFileName, masterFilesNode);
+            //Controllo che il dare e l'avere nel file xml coincida, sia per quanto riguarda i conti d'apertura che le registrazioni
+            this.checkDebitCredit(this.openingDebitBalance,this.openingCreditBalance,"opening");
+            this.checkDebitCredit(this.closingDebitBalance,this.closingCreditBalance,"closing");
+            this.checkDebitCredit(this.transTotalCredit,this.transTotalDebit,"transactions");
 
             /*********************************************************************
              * ADD THE COSTUMERS
@@ -128,6 +142,44 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         this.jsonDocArray.push(jsonDoc);
 
     }
+
+    /**
+     * Checks if the debit and credit amount is the same, if it's different, displays  a message in the message panel.
+     * @param {*} debitAmount 
+     * @param {*} creditAmount 
+     * @param {*} type the type of amount passed: opening,closing or transactions
+     */
+    checkDebitCredit(debitAmount,creditAmount,type){
+        if(creditAmount!==debitAmount){
+            var difference=Banana.SDecimal.add(debitAmount,creditAmount);
+            if(type=="opening"){
+                var msg=this.getInvoiceErrorMessage(this.ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES,difference);
+                this.banDocument.addMessage(msg,this.ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES);
+            }
+            if(type=="transactions"){
+                var msg=this.getInvoiceErrorMessage(this.ID_ERR_TRANSACTIONS_DEBIT_CREDIT_WITH_DIFFERENCES,difference);
+                this.banDocument.addMessage(msg,this.ID_ERR_TRANSACTIONS_DEBIT_CREDIT_WITH_DIFFERENCES);
+            }
+            if(type=="closing"){
+                var msg=this.getInvoiceErrorMessage(this.ID_ERR_CLOSING_DEBIT_CREDIT_WITH_DIFFERENCES,difference);
+                this.banDocument.addMessage(msg,this.ID_ERR_CLOSING_DEBIT_CREDIT_WITH_DIFFERENCES);
+            }
+        }
+
+    }
+
+    
+   getInvoiceErrorMessage(errorId,difference){
+    switch (errorId) {
+        case this.ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES:
+            return "XML file: "+"'"+difference+"'"+ " Difference between Debit and Credit in opening balances";
+        case this.ID_ERR_TRANSACTIONS_DEBIT_CREDIT_WITH_DIFFERENCES:
+            return "XML file: "+"'"+difference+"'"+ " Difference between Debit and Credit in the total of transactions"; 
+        case this.ID_ERR_CLOSING_DEBIT_CREDIT_WITH_DIFFERENCES:
+            return "XML file: "+"'"+difference+"'"+ " Difference between Debit and Credit in closing balances";
+    }
+    return '';
+ }
     /**
      * create the json structure to add the company information in the properties of the banana file
      * @param {*} jsonDoc json object already initialised with some values 
@@ -345,6 +397,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var ccList=this.ccList;
 
         var generalLedgerEntriesNode = xmlRoot.firstChildElement('n1:GeneralLedgerEntries');
+        this.transTotalDebit=generalLedgerEntriesNode.firstChildElement('n1:TotalDebit');
+        this.transTotalCredit=generalLedgerEntriesNode.firstChildElement('n1:TotalCredit');
         var journalNode = generalLedgerEntriesNode.firstChildElement('n1:Journal');
 
         while (journalNode) {
@@ -622,6 +676,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             var bclass = "";
             var totalGr = "";
             var opening = "";
+            var closing="";
             var grDescription = "";
 
             accountNumber = accountNode.firstChildElement('n1:AccountID').text;
@@ -632,6 +687,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             /**
              * come scritto nella documentazione ufficiale, per mappare i conti in raggruppamenti posso usare l'elemento 'StandardAccountID', o in sua 
              * assenza posso utilizzare 'GroupingCode' o 'GroupingCategory '
+             * Incremento il contatore debitBalance o creditBalance, in modo da poter controllare alla fine se coincidono.
              */
             if (accountNode.hasChildElements('n1:StandardAccountID'))
                 gr = accountNode.firstChildElement('n1:StandardAccountID').text;
@@ -643,9 +699,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             bclass = this.setBClassByAccount(accountNumber);
 
+
+            //opening balance
             if (accountNode.hasChildElements('n1:OpeningDebitBalance') || accountNode.hasChildElements('n1:OpeningCreditBalance')) {
                 if (accountNode.hasChildElements('n1:OpeningDebitBalance')) {
                     opening = accountNode.firstChildElement('n1:OpeningDebitBalance').text;
+                    this.openingDebitBalance=Banana.SDecimal.add(this.openingDebitBalance,opening);
                 } else if (accountNode.hasChildElements('n1:OpeningCreditBalance')) {
                     var openingValue = accountNode.firstChildElement('n1:OpeningCreditBalance').text;
                     if (openingValue !== "0") {
@@ -653,6 +712,23 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     } else {
                         opening = openingValue; // 0
                     }
+                    this.openingCreditBalance=Banana.SDecimal.add(this.openingCreditBalance,opening);
+                }
+            }
+
+            //closing balance
+            if (accountNode.hasChildElements('n1:ClosingDebitBalance') || accountNode.hasChildElements('n1:ClosingCreditBalance')) {
+                if (accountNode.hasChildElements('n1:ClosingDebitBalance')) {
+                    closing = accountNode.firstChildElement('n1:ClosingDebitBalance').text;
+                    this.closingDebitBalance=Banana.SDecimal.add(this.closingDebitBalance,closing);
+                } else if (accountNode.hasChildElements('n1:ClosingCreditBalance')) {
+                    var closingValue = accountNode.firstChildElement('n1:ClosingCreditBalance').text;
+                    if (closingValue !== "0") {
+                        closing = Banana.SDecimal.invert(accountNode.firstChildElement('n1:ClosingCreditBalance').text);
+                    } else {
+                        closing = closingValue; // 0
+                    }
+                    this.closingCreditBalance=Banana.SDecimal.add(this.closingCreditBalance,closing);
                 }
             }
 

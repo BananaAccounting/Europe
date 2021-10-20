@@ -1,0 +1,18 @@
+{
+    "country": "France",
+    "countryCode": "fr",
+    "description": "Import FEC file(csv)",
+    "docUri": "",
+    "fileExtension": "csv",
+    "mimeType": "text/csv",
+    "script": {
+        "function": "exec",
+        "uri": "ch.banana.fr.app.fecfileimport.sbaa/createinit.js"
+    },
+    "xml": {
+        "namespace": "http://www.auditfiles.nl/XAF/3.2",
+        "rootItem": "auditfile"
+    },
+    "type": "text/json",
+    "version": "1.0"
+}

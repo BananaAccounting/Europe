@@ -1,0 +1,16 @@
+{
+    "country": "france",
+    "countryCode": "fr",
+    "description": "Import Audit Files with Document Change",
+    "docUri": "",
+    "fileExtension": "xml",
+    "mimeType": "text/xml",
+    "script": {
+        "function": "exec",
+        "uri": "creator.js"
+    },
+    "xml": {
+        "namespace": "http://www.auditfiles.nl/XAF/3.2",
+        "rootItem": "auditfile"
+    }
+}

@@ -77,10 +77,108 @@
         var lang = this.getLang();
 
 
-        //create Accounts
+        //import Accounts
         this.createJsonDocument_AddAccounts(jsonDoc,inData);
+        //import Transactions
+        this.createJsonDocument_AddTransactions(jsonDoc,inData);
+        //Company Info's-->Not available in this kind of file
 
         this.jsonDocArray.push(jsonDoc);
+
+    }
+
+    createJsonDocument_AddTransactions(jsonDoc,inData){
+
+        var rows = [];
+        var jContraAccountGroup = [];
+        var transactionsRows=inData;
+        jContraAccountGroup = this.getJContraAccounGroups(transactionsRows);
+
+        var transactions = [];
+        for (var i = 0; i < jContraAccountGroup.length; i++) {
+            transactions.push(this.getByValue(transactionsRows, jContraAccountGroup[i]));
+        }
+
+        for (var i = 0; i < transactions.length; i++) {
+            var date = "";
+            var description = "";
+            var accountDebit = "";
+            var accountCredit = "";
+            var debitAmount = "";
+            var creditAmount = "";
+            var amount = "";
+
+            var checkDebitAmount = "";
+            var checkCreditAmount = "";
+
+            //The transaction is on more then 2 lines: 3+ rows from the journal
+            if (transactions[i].length > 2) {
+                for (var j = 0; j < transactions[i].length; j++) {
+                    date = this.formatDate(transactions[i][j][3]);
+                    description = transactions[i][j][10];
+                    //il montante è a debito 
+                    if (transactions[i][j][4] && transactions[i][j][11]) {
+                        accountDebit = transactions[i][j][4];
+                        accountCredit = "";
+                        debitAmount = transactions[i][j][11];
+
+                        //create and add the transaction line
+                        var row=this.getTransactionRow(date,description,accountDebit,accountCredit,debitAmount);
+                        rows.push(row);
+
+                        checkDebitAmount = Banana.SDecimal.add(checkDebitAmount, debitAmount);
+                        //il montante è a credito 
+                    } else if (transactions[i][j][4] && transactions[i][j][12]) {
+                        accountDebit = "";
+                        accountCredit = transactions[i][j][4];
+                        creditAmount = transactions[i][j][12];
+
+                        //create and add the transaction line
+                        var row=this.getTransactionRow(date,description,accountDebit,accountCredit,creditAmount);
+                        rows.push(row);
+
+                        checkCreditAmount = Banana.SDecimal.add(checkCreditAmount, creditAmount);
+                    }
+                }
+
+                if (checkDebitAmount !== checkCreditAmount) {
+                    Banana.document.addMessage("Debit amount != Credit amount!!!");
+                }
+
+            }        
+            //The transaction is on one line: 2 rows from the journal
+            else {
+                for (var j = 0; j < transactions[i].length; j++) {
+                    var date = this.formatDate(transactions[i][j][3]);
+                    var description = transactions[i][j][10];
+                    if (transactions[i][j][4] && transactions[i][j][11]) {
+                        var accountDebit = transactions[i][j][4];
+                        var debitAmount = Banana.SDecimal.add(debitAmount, transactions[i][j][11]);
+                    } else if (transactions[i][j][4] && transactions[i][j][12]) {
+                        var accountCredit = transactions[i][j][4];
+                        var creditAmount = Banana.SDecimal.add(creditAmount, transactions[i][j][12]);
+                    }
+                }
+
+                    //create and add the transaction line
+                    var row=this.getTransactionRow(date,description,accountDebit,accountCredit,debitAmount);
+                    rows.push(row);
+    
+                if (debitAmount !== creditAmount) {
+                    Banana.document.addMessage("Debit amount != Credit amount!!!");
+                }
+            }
+
+        }
+
+        var dataUnitFilePorperties = {};
+        dataUnitFilePorperties.nameXml = "Transactions";
+        dataUnitFilePorperties.data = {};
+        dataUnitFilePorperties.data.rowLists = [];
+        dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+
+        jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+
 
     }
 
@@ -95,36 +193,40 @@
             
             var accountNumber="";
             var accountDescription="";
-            var bclass="";
+            var bClass="";
             var gr="";
+            var accountAlreadyExistent=false;
 
             accountNumber=accounts[i].split('&$&')[0]; // i.e. "1000&$&Cash" => "1000"
             accountDescription = accounts[i].split('&$&')[1]; // i.e. "1000&$&Cash" => "Cash"
-            bclass = this.setBclassByAccount(accountNumber);
+            bClass = this.setBclassByAccount(accountNumber);
             gr = this.setGrByAccount(accountNumber, 2);
 
-            if(this.gr!=gr){//RIPRENDERE DALLA SISTEMAZIONE DEI RAGGRUPPAMENTI
-                var grRows = this.getGroupRow(this.lead.code, accType);
-                rows.push(grRows.row);
-                rows.push(grRows.emptyRow);
+
+            //check if account already exists
+            var existingAccounts=this.getAccountsTableRow();
+
+            for(var row in existingAccounts){
+                var account=existingAccounts[row];
+                if(account.accountNr==accountNumber)
+                    accountAlreadyExistent=true;  
             }
 
+            if(!accountAlreadyExistent){
 
+                this.getRowIndex(existingAccounts,accountNumber);
 
+                var row = {};
+                row.operation = {};
+                row.operation.name = "add";
+                row.fields = {};
+                row.fields["Account"] = accountNumber;
+                row.fields["Description"] = accountDescription;
+                row.fields["BClass"] = bClass;
+                row.fields["Gr"] = gr;
 
-            var row = {};
-            row.operation = {};
-            row.operation.name = "add";
-            row.fields = {};
-            row.fields["Account"] = accountNumber;
-            row.fields["Description"] = accountDescription;
-            row.fields["BClass"] = bclass;
-            row.fields["Gr"] = gr;
-
-            rows.push(row);
-
-            this.bClass=bClass;
-            this.gr
+                rows.push(row);
+            }
 
         }
 
@@ -134,48 +236,169 @@
         dataUnitFilePorperties.data.rowLists = [];
         dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
 
-        // Banana.Ui.showText(JSON.stringify(dataUnitFilePorperties));
-
         jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
 
         
     }
 
-    getGroupRow(grCode, accType) {
+    getRowIndex(existingAccounts,accountNumber){
+        var minDiff="";
+        //RPER ORA DA COME RISULTATO QUELLO CHE VA PIU IN NEGATIVO, DA AGGIUSTARE
+        var rowIndex="";
+        for(var row in existingAccounts){
+            var accountNr=existingAccounts[row].accountNr;
+            var accountRowNr=existingAccounts[row].rowNr
+            var difference=Banana.SDecimal.subtract(accountNumber,accountNr);
+            var res=Banana.SDecimal.compare(difference,minDiff);
+            Banana.console.debug("row: "+accountRowNr+" / "+"difference: "+difference);
+            if(res==-1 && difference){
+                minDiff=difference;
+                rowIndex=accountRowNr;
+            }
+        }
+        Banana.console.debug("final rowIndex: "+rowIndex);
+        return rowIndex;
+    }
+
+
+    getAccountsTableRow() {
+
+    var table = Banana.document.table("Accounts");
+    if (!table) {
+        return;
+    }
+
+    var accountRows=[];
+
+    for (var i = 0; i < table.rowCount; i++) {
+        let tRow = table.row(i);
+
+        if(tRow.value("Account")){
+            var account={};
+            account.accountNr = tRow.value("Account");
+            account.rowNr = tRow.rowNr;
+            accountRows.push(account);
+        }
+
+    }
+    return accountRows;
+}
+
+getTransactionRow(date,description,accountDebit,accountCredit,amount){
+    var row = {};
+    row.operation = {};
+    row.operation.name = "add";
+    row.fields = {};
+    row.fields["Date"] = date;
+    row.fields["Description"] = description;
+    row.fields["AccountDebit"] = accountDebit;
+    row.fields["AccountCredit"] = accountCredit;
+    row.fields["Amount"] = amount;
+
+    return row;
+}
+
+    /******************************************************************************
+     * The methods in this section are used to create groupings, if a template is provided in the package,
+     *  the groups already exist, so these methods are not used.
+     ******************************************************************************/
+
+    /**
+     * 
+     * 
+     */
+
+    getGroupRow() {
         var grRows = {};
         grRows.row = {};
         grRows.row.operation = {};
         grRows.row.operation.name = "add";
         grRows.row.fields = {};
-        grRows.row.fields["Group"] = grCode;
-        grRows.row.fields["Description"] = this.lead.description;
-        grRows.row.fields["Gr"] = this.getGroupTotal(this.bClass, accType);
+        grRows.row.fields["Group"] = this.gr;
+        grRows.row.fields["Description"] = "Total Group: "+this.gr;
+        grRows.row.fields["Gr"] = this.getGroupTotal(this.bClass);
         grRows.emptyRow = this.getEmptyRow();
 
         return grRows;
     }
 
-    getSectionRow(currentAccType, previsousAccType) {
+    getSectionRow() {
         var secRows = {};
         secRows.row = {};
         secRows.row.operation = {};
         secRows.row.operation.name = "add";
         secRows.row.fields = {};
-        secRows.row.fields["Group"] = this.getGroupTotal(this.bClass, currentAccType);
-        secRows.row.fields["Description"] = this.getSectionDescription(this.bClass, currentAccType);
-        secRows.row.fields["Gr"] = this.getSectionGr(previsousAccType);
+        var group=this.getGroupTotal(this.bClass);
+        secRows.row.fields["Group"] =group;
+        secRows.row.fields["Description"] = "Total Section: "+group;
+        secRows.row.fields["Gr"] = this.getSectionGr();
         //create an empty row to append after the total row
         secRows.emptyRow = this.getEmptyRow();
         return secRows;
     }
 
+    getGroupTotal(){
+        var groupTotal="";
+        switch (this.bClass) {
+            case "1":
+                groupTotal = "A"
+                return groupTotal;
+            case "2":
+                groupTotal = "P"
+                return groupTotal;
+            case "3":
+                groupTotal = "C"
+                return groupTotal;
+            case "4":
+                groupTotal = "R"
+                return groupTotal;
+            default:
+                return groupTotal;
+        }
+
+    }
+
+    getSectionGr() {
+        var sectionTotal = "";
+        switch (this.bClass) {
+            case "1":
+            case "2":
+                sectionTotal = "00"
+                return sectionTotal;
+            case "3":
+            case "4":
+                sectionTotal = "02"
+                return sectionTotal;
+            default:
+                return sectionTotal;
+        }
+    }
+
+    getEmptyRow() {
+        var emptyRow = {};
+        emptyRow.operation = {};
+        emptyRow.operation.name = "add";
+        emptyRow.fields = {};
+
+        return emptyRow;
+    }
+
+    /**************************************************
+     * End Section
+     **************************************************/
+
+    /**
+     * 
+     * @param {*} transactionsRows 
+     * @returns 
+     */
+
     getAccountsList(transactionsRows){
         var accountsList=[];
-        for (var trRow in transactionsRows){
-            var fileRow=transactionsRows[trRow];
-                if (fileRow["CompteNum"] && fileRow["CompteLib"]) {
-                    accountsList.push(fileRow["CompteNum"]+"&$&"+fileRow["CompteLib"]);
-                }
+        for (var i = 1; i < transactionsRows.length; i++) {
+            if (transactionsRows[i][4] && transactionsRows[i][5]) {
+                accountsList.push(transactionsRows[i][4]+"&$&"+transactionsRows[i][5]);
+            }
         }
         // Removing duplicates
         for (var i = 0; i < accountsList.length; i++) {
@@ -227,6 +450,38 @@
         }
         //Banana.console.log(bclass);
         return bclass;
+    }
+
+    getJContraAccounGroups(csvFile) {
+        var values = [];
+        for (var i = 1; i < csvFile.length; i++) {
+            values.push(csvFile[i][2]); //third column = JContraAccountGroup
+        }
+        //Removing duplicates
+        for (var i = 0; i < values.length; i++) {
+            for (var x = i+1; x < values.length; x++) {
+                if (values[x] === values[i]) {
+                    values.splice(x,1);
+                    --x;
+                }
+            }
+        }
+        return values;
+    }
+
+    getByValue(arr, value) {
+        var x = [];
+        for (var i=0, iLen=arr.length; i<iLen; i++) {
+            if (arr[i][2] == value) {
+                x.push(arr[i]);
+            }
+        }
+        return x;
+    }
+
+    formatDate(date) {
+        return [date.slice(0, 4), "-", date.slice(4, 6), "-", date.slice(6, 8)].join('');
+        // 20191231 => return 2019-12-31
     }
 
     createJsonDocument_Init() {
@@ -389,10 +644,7 @@ function exec(inData) {
 
     //Get the txt file and convert to array
     var fieldSeparator = findSeparator(inData);
-    var transactions = Banana.Converter.csvToArray(inData, fieldSeparator, '"');
-    var transactions_header=transactions[0];
-    transactions.splice(0,1);
-    var transactionsObjs=Banana.Converter.arrayToObject(transactions_header,transactions,true);
+    var transactions = Banana.Converter.csvToArray(inData, '\t', '');
 
 
     var frAuditFilesImport = new FrAuditFilesImport(Banana.document);
@@ -400,7 +652,7 @@ function exec(inData) {
         return "@Cancel";
     }
 
-    frAuditFilesImport.createJsonDocument(transactionsObjs);
+    frAuditFilesImport.createJsonDocument(transactions);
 
     var jsonDoc = { "format": "documentChange", "error": "" };
     jsonDoc["data"] = frAuditFilesImport.jsonDocArray;

@@ -27,28 +27,28 @@
 // @inputfilefilter = Text files (*.txt *.csv);;All files (*.*)
 
 /*
-*   SUMMARY
-*
-*   Import the transactions taken from the txt file.
-*
-*
-*   Double entry accounting, Transactions table:
-*   "AccountDebit" column = "Account" value
-*   "AccountCredit" column = "ContraAccount" value
-*   "Amount" column = "Income" value;
-*
-*/
+ *   SUMMARY
+ *
+ *   Import the transactions taken from the txt file.
+ *
+ *
+ *   Double entry accounting, Transactions table:
+ *   "AccountDebit" column = "Account" value
+ *   "AccountCredit" column = "ContraAccount" value
+ *   "Amount" column = "Income" value;
+ *
+ */
 
 /* Main function */
 function exec(inData) {
 
     if (!Banana.document) {
-      return "@Cancel";
+        return "@Cancel";
     }
 
     // Convert the txt file to an array of array
     var csvFile = Banana.Converter.csvToArray(inData, '\t', '');
-    
+
     // Create an array with all the JContraAccountGroup taken from the csvFile
     var jContraAccountGroup = [];
     jContraAccountGroup = getJContraAccounGroups(csvFile);
@@ -58,7 +58,7 @@ function exec(inData) {
     for (var i = 0; i < jContraAccountGroup.length; i++) {
         transactions.push(getByValue(csvFile, jContraAccountGroup[i]));
     }
-    
+
     // Create the file used to import the transaction in Banana */
     var importTransactionsFile = createImportTransactionsFile(transactions);
     // Banana.console.log(importTransactionsFile);
@@ -76,7 +76,7 @@ function exec(inData) {
 
 // Create the text file used to import the transactions
 function createImportTransactionsFile(transactions) {
-    
+
     var importTransactionsFile = "";
     importTransactionsFile += "Date\tDescription\tAccount\tContraAccount\tIncome\n";
 
@@ -93,26 +93,28 @@ function createImportTransactionsFile(transactions) {
         var checkCreditAmount = "";
 
         //The transaction is on more then 2 lines: 3+ rows from the journal
+
         if (transactions[i].length > 2) {
+            Banana.console.debug(transactions[i]);
             for (var j = 0; j < transactions[i].length; j++) {
                 var date = formatDate(transactions[i][j][3]);
                 var description = transactions[i][j][10];
+                Banana.console.debug(transactions[i][j][10]);
                 if (transactions[i][j][4] && transactions[i][j][11]) {
                     var accountDebit = transactions[i][j][4];
                     var accountCredit = "";
                     var debitAmount = transactions[i][j][11];
-                    importTransactionsFile += date+"\t"+description+"\t"+accountDebit+"\t"+accountCredit+"\t"+debitAmount+"\n";
+                    importTransactionsFile += date + "\t" + description + "\t" + accountDebit + "\t" + accountCredit + "\t" + debitAmount + "\n";
 
                     checkDebitAmount = Banana.SDecimal.add(checkDebitAmount, debitAmount);
-                }
-                else if (transactions[i][j][4] && transactions[i][j][12]) {
+                } else if (transactions[i][j][4] && transactions[i][j][12]) {
                     var accountDebit = "";
                     var accountCredit = transactions[i][j][4];
                     var creditAmount = transactions[i][j][12];
-                    importTransactionsFile += date+"\t"+description+"\t"+accountDebit+"\t"+accountCredit+"\t"+creditAmount+"\n";
-                    
+                    importTransactionsFile += date + "\t" + description + "\t" + accountDebit + "\t" + accountCredit + "\t" + creditAmount + "\n";
+
                     checkCreditAmount = Banana.SDecimal.add(checkCreditAmount, creditAmount);
-                }   
+                }
             }
 
             if (checkDebitAmount !== checkCreditAmount) {
@@ -127,15 +129,14 @@ function createImportTransactionsFile(transactions) {
                 var description = transactions[i][j][10];
                 if (transactions[i][j][4] && transactions[i][j][11]) {
                     var accountDebit = transactions[i][j][4];
-                    var debitAmount = Banana.SDecimal.add(debitAmount,transactions[i][j][11]);
-                }
-                else if (transactions[i][j][4] && transactions[i][j][12]) {
+                    var debitAmount = Banana.SDecimal.add(debitAmount, transactions[i][j][11]);
+                } else if (transactions[i][j][4] && transactions[i][j][12]) {
                     var accountCredit = transactions[i][j][4];
-                    var creditAmount = Banana.SDecimal.add(creditAmount,transactions[i][j][12]);
-                } 
+                    var creditAmount = Banana.SDecimal.add(creditAmount, transactions[i][j][12]);
+                }
             }
 
-            importTransactionsFile += date+"\t"+description+"\t"+accountDebit+"\t"+accountCredit+"\t"+debitAmount+"\n";
+            importTransactionsFile += date + "\t" + description + "\t" + accountDebit + "\t" + accountCredit + "\t" + debitAmount + "\n";
 
             if (debitAmount !== creditAmount) {
                 Banana.document.addMessage("Debit amount != Credit amount!!!");
@@ -153,9 +154,9 @@ function getJContraAccounGroups(csvFile) {
     }
     //Removing duplicates
     for (var i = 0; i < values.length; i++) {
-        for (var x = i+1; x < values.length; x++) {
+        for (var x = i + 1; x < values.length; x++) {
             if (values[x] === values[i]) {
-                values.splice(x,1);
+                values.splice(x, 1);
                 --x;
             }
         }
@@ -166,7 +167,7 @@ function getJContraAccounGroups(csvFile) {
 // Takes all the elements from an array of array with the same value
 function getByValue(arr, value) {
     var x = [];
-    for (var i=0, iLen=arr.length; i<iLen; i++) {
+    for (var i = 0, iLen = arr.length; i < iLen; i++) {
         if (arr[i][2] == value) {
             x.push(arr[i]);
         }
@@ -179,4 +180,3 @@ function formatDate(date) {
     return [date.slice(0, 4), "-", date.slice(4, 6), "-", date.slice(6, 8)].join('');
     // 20191231 => return 2019-12-31
 }
-

@@ -1,0 +1,18 @@
+{
+    "country": "Norway",
+    "countryCode": "no",
+    "description": "Import audit file(xml)",
+    "docUri": "",
+    "fileExtension": "xml",
+    "mimeType": "text/xml",
+    "script": {
+        "function": "exec",
+        "uri": "ch.banana.no.app.auditfileimport.sbaa/createinit.js"
+    },
+    "xml": {
+        "namespace": "urn:StandardAuditFile-Taxation-Financial:NO",
+        "rootItem": "AuditFile"
+    },
+    "type": "text/json",
+    "version": "1.0"
+}

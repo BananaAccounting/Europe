@@ -1,0 +1,11 @@
+{
+    "category": "productivity",
+    "country":"Norway",
+    "countryCode":"no",
+    "description": "[BETA] Import Audit File Norway (XML)",
+    "id": "ch.banana.no.app.auditfileimport",
+    "language":"en",
+    "publisher": "Banana.ch",
+    "title": "[BETA] Import Audit File Norway (XML)",
+    "version": "1.0"
+}

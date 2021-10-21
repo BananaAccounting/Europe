@@ -205,20 +205,17 @@
 
             //check if account already exists
             var existingAccounts=this.getAccountsTableRow();
-
-            for(var row in existingAccounts){
-                var account=existingAccounts[row];
-                if(account.accountNr==accountNumber)
-                    accountAlreadyExistent=true;  
-            }
+            //check if exists
+            accountAlreadyExistent=this.checkIfAccountExists(existingAccounts,accountNumber,accountAlreadyExistent);
 
             if(!accountAlreadyExistent){
 
-                this.getRowIndex(existingAccounts,accountNumber);
+                var accountIndex=this.getNewAccountIndex(existingAccounts,accountNumber);
 
                 var row = {};
                 row.operation = {};
                 row.operation.name = "add";
+                row.operation.sequence=accountIndex;
                 row.fields = {};
                 row.fields["Account"] = accountNumber;
                 row.fields["Description"] = accountDescription;
@@ -241,23 +238,71 @@
         
     }
 
-    getRowIndex(existingAccounts,accountNumber){
-        var minDiff="";
-        //RPER ORA DA COME RISULTATO QUELLO CHE VA PIU IN NEGATIVO, DA AGGIUSTARE
-        var rowIndex="";
+    checkIfAccountExists(existingAccounts,accountNumber,accountAlreadyExistent){
+        for(var row in existingAccounts){
+            var account=existingAccounts[row];
+            if(account.accountNr==accountNumber){
+                accountAlreadyExistent=true;  
+                return accountAlreadyExistent;
+            }
+        }
+        return accountAlreadyExistent;
+    }
+
+/**
+ * This method returns the line number where the new account is to be inserted, and does so by searching through the existing accounts for the one with the closest value.
+ * @param {*} existingAccounts the list of existing accounts
+ * @param {*} accountNumber the new account
+ * @returns 
+ */
+    getNewAccountIndex(existingAccounts,accountNumber){
+        var refIndex="";
+        var refValue="";
+        var newAccountIndex="";
+        var closest=0;
         for(var row in existingAccounts){
             var accountNr=existingAccounts[row].accountNr;
             var accountRowNr=existingAccounts[row].rowNr
             var difference=Banana.SDecimal.subtract(accountNumber,accountNr);
-            var res=Banana.SDecimal.compare(difference,minDiff);
-            Banana.console.debug("row: "+accountRowNr+" / "+"difference: "+difference);
-            if(res==-1 && difference){
-                minDiff=difference;
-                rowIndex=accountRowNr;
+            //this algorithm finds the closest difference to zero, then saves the value and index (row) of the element with the smallest difference from the new account
+            //works only with numerical accounts, for the time being the other types of accounts are inserted at the end of the chart of accounts.
+            if(difference){
+                if (closest === 0) {
+                    closest = difference
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                } else if (difference > 0 && difference <= Math.abs(closest)) {
+                    closest = difference
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                } else if (difference < 0 && - difference < Math.abs(closest)) {
+                    closest = difference;
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                }
+                //Banana.console.debug("row: "+accountRowNr+" / "+"difference: "+difference);
             }
         }
-        Banana.console.debug("final rowIndex: "+rowIndex);
-        return rowIndex;
+        //i have the index and the value of the account number more similar to the one i need to add.
+        // Now check which one is bigger, so that I know whether to put the new account before or after the one found 
+        //Banana.console.debug("final rowIndex: "+refIndex+" / "+refValue);
+
+        if(refValue && refIndex){
+            var compare=Banana.SDecimal.compare(accountNumber,refValue);
+            //if the new account is bigger, increase the index by one, so the new account will be positioned after the reference one
+            //if the new account is smaller, decrease the index bey one, and will be positioned before the reference one.
+            if(compare==1)
+            newAccountIndex=Banana.SDecimal.add(refIndex,1);
+            else if (compare==-1)
+            newAccountIndex=Banana.SDecimal.subtract(refIndex,1);
+
+            //set the format of the line so that it is recognised as a valid sequence by the document change
+            newAccountIndex+=".1";
+            
+            Banana.console.debug("final newRowIndex: "+newAccountIndex);
+        }
+
+        return newAccountIndex;
     }
 
 

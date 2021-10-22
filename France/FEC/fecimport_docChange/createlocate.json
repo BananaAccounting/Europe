@@ -1,7 +1,7 @@
 {
     "country": "France",
     "countryCode": "fr",
-    "description": "[BETA] Import FEC File France (csv)",
+    "description": "[BETA] Import FEC File France (tcsv)",
     "docUri": "",
     "fileExtension": "csv",
     "mimeType": "text/csv",

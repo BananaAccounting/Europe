@@ -30,7 +30,7 @@ function exec(inData) {
                 "decimals": "2"
 
             },
-            "template": "",
+            "template": "https://github.com/BananaAccounting/Europe/raw/master/France/templates/comptabilite_double/cd_tva_entreprise.ac2",
         },
         "scriptImport": {
             "function": "exec",

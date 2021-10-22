@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.fr.app.fecfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-19
+// @pubdate = 2021-10-122
 // @publisher = Banana.ch SA
 // @description = Importation de fichiers d'enregistrements comptables (FEC) 
 // @description.fr = Importation de fichiers d'enregistrements comptables (FEC)
@@ -23,6 +23,11 @@
 // @task = import.file
 // @inputencoding = utf-8
 // @inputfilefilter = Text files (*.txt *.csv);;All files (*.*)
+
+
+/*****************************************************************************************************
+ * THIS VERSION PLANS TO START FROM A FILE WITH THE CHART OF ACCOUNTS ALREADY SETUP
+ *****************************************************************************************************/
 
 /*
 *   SUMMARY
@@ -82,7 +87,6 @@
         //import Transactions
         this.createJsonDocument_AddTransactions(jsonDoc,inData);
         //Company Info's-->Not available in this kind of file
-        //customers and suppliers are available in separated files from the one with the transactions, currently we do not have those files.
 
         this.jsonDocArray.push(jsonDoc);
 
@@ -103,10 +107,10 @@
         for (var i = 0; i < transactions.length; i++) {
             var date = "";
             var description = "";
+            var transNr="";
             var accountDebit = "";
             var accountCredit = "";
             var debitAmount = "";
-            var transNr="";
             var creditAmount = "";
             var amount = "";
 
@@ -163,6 +167,7 @@
                         var creditAmount = Banana.SDecimal.add(creditAmount, transactions[i][j][12]);
                     }
                 }
+
                     //create and add the transaction line
                     var row=this.getTransactionRow(date,transNr,description,accountDebit,accountCredit,debitAmount);
                     rows.push(row);
@@ -196,70 +201,37 @@
             
             var accountNumber="";
             var accountDescription="";
-            var bClass="";
-            var gr="";
+            var accountBClass="";
+            var accountAlreadyExistent=false;
 
             accountNumber=accounts[i].split('&$&')[0]; // i.e. "1000&$&Cash" => "1000"
             accountDescription = accounts[i].split('&$&')[1]; // i.e. "1000&$&Cash" => "Cash"
-            bClass = this.setBclassByAccount(accountNumber);
-            gr = this.setGrByAccount(accountNumber, 2);
+            accountBClass = this.setBclassByAccount(accountNumber);
 
 
-            //if changes group, add a grouping row
-            if (this.gr != gr) {
-                //normal groups
-                var grRows = this.getGroupRow();
-                rows.push(grRows.row);
-                rows.push(grRows.emptyRow);
+            //get the list of existing accounts in the account table
+            var existingAccounts=this.getAccountsTableRow();
+            //check if exists
+            accountAlreadyExistent=this.checkIfAccountExists(existingAccounts,accountNumber,accountAlreadyExistent);
 
-                //carried over groups
-                var grCarriedOver = this.getGroupCarriedOver();
-                var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver);
-                rows.push(grCarrOverRows.row);
+            if(!accountAlreadyExistent){
+
+                var newAccountData=this.getNewAccountPositionData(existingAccounts,accountNumber,accountBClass);
+
+                var row = {};
+                row.operation = {};
+                row.operation.name = "add";
+                row.operation.sequence=newAccountData.index;
+                row.fields = {};
+                row.fields["Account"] = accountNumber;
+                row.fields["Description"] = accountDescription;
+                row.fields["BClass"] = newAccountData.bClass;
+                row.fields["Gr"] = newAccountData.gr;
+
+                rows.push(row);
             }
-
-            //if changes bclass, add section group row
-            if (this.bClass != bClass) {
-                var secRows = this.getSectionRow();
-                rows.push(secRows.row);
-                rows.push(secRows.emptyRow);
-            }
-
-
-            var row = {};
-            row.operation = {};
-            row.operation.name = "add";
-            row.fields = {};
-            row.fields["Account"] = accountNumber;
-            row.fields["Description"] = accountDescription;
-            row.fields["BClass"] = bClass;
-            row.fields["Gr"] = gr;
-
-            rows.push(row);
-
-            this.gr=gr;
-            this.bClass=bClass;
 
         }
-
-        //last group
-        var grRows = this.getGroupRow();
-        rows.push(grRows.row);
-        rows.push(grRows.emptyRow);
-        //last section
-        var secRows = this.getSectionRow()
-        rows.push(secRows.row);
-        rows.push(secRows.emptyRow);
-
-        //add Profit and Loss Group Total
-        var totCeRow = this.getTotCeRow();
-        rows.push(totCeRow.row);
-        rows.push(totCeRow.emptyRow);
-
-        //Add Balance Group Total
-        var balanceDiff = this.getBalanceDiff();
-        rows.push(balanceDiff.row);
-        rows.push(balanceDiff.emptyRow);
 
         var dataUnitFilePorperties = {};
         dataUnitFilePorperties.nameXml = "Accounts";
@@ -283,6 +255,79 @@
         return accountAlreadyExistent;
     }
 
+/**
+ * This method returns the line number where the new account is to be inserted, and does so by searching through the existing accounts for the one with the closest value.
+ * @param {*} existingAccounts the list of existing accounts
+ * @param {*} accountNumber the new account
+ * @returns 
+ */
+    getNewAccountPositionData(existingAccounts,accountNumber,newAccountBClass){
+
+        var newAccountData={};
+
+        var refIndex="";
+        var refValue="";
+        var newAccountIndex="";
+        var closest=0;
+        for(var row in existingAccounts){
+            var accountNr=existingAccounts[row].accountNr;
+            var accountRowNr=existingAccounts[row].rowNr;
+            var accountGr=existingAccounts[row].gr;
+            var accountbClass=existingAccounts[row].bClass;
+            var difference=Banana.SDecimal.subtract(accountNumber,accountNr);
+            var sameBClass=false;
+
+            //check if the class set for the new account is the same as the account I am evaluating. this check is made because some accounts may appear in both assets and liabilities.
+            if(newAccountBClass==accountbClass)
+                sameBClass=true;
+
+            //this algorithm finds the closest difference to zero, then saves the value and index (row) of the element with the smallest difference from the new account
+            //works only with numerical accounts, for the time being the other types of accounts are inserted at the end of the chart of accounts, because the sequence field stay empty
+
+            if(difference && sameBClass){
+                if (closest === 0) {
+                    closest = difference
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                    newAccountData.gr=accountGr;
+                    newAccountData.bClass=accountbClass;
+                } else if (difference > 0 && difference <= Math.abs(closest)) {
+                    closest = difference
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                    newAccountData.gr=accountGr;
+                    newAccountData.bClass=accountbClass;
+                } else if (difference < 0 && - difference < Math.abs(closest)) {
+                    closest = difference;
+                    refIndex=accountRowNr;
+                    refValue=accountNr;
+                    newAccountData.gr=accountGr;
+                    newAccountData.bClass=accountbClass;
+                }
+                //Banana.console.debug("row: "+accountRowNr+" / "+"difference: "+difference);
+            }
+        }
+        //i have the index and the value of the account number more similar to the one i need to add.
+        // Now check which one is bigger, so that I know whether to put the new account before or after the one found 
+        //Banana.console.debug("final rowIndex: "+refIndex+" / "+refValue);
+
+        if(refValue && refIndex){
+            var compare=Banana.SDecimal.compare(accountNumber,refValue);
+            //if the new account is smaller, decrease the index bey one, and will be positioned before the reference one.
+            if (compare==-1)
+                newAccountIndex=Banana.SDecimal.subtract(refIndex,1);
+            else    
+                newAccountIndex=refIndex;
+            //set the format of the line so that it is recognised as a valid sequence by the document change
+            newAccountIndex+=".1";
+            newAccountData.index=newAccountIndex;
+            
+            //Banana.console.debug("final newRowIndex: "+newAccountIndex);
+        }
+
+        return newAccountData;
+    }
+
 
     getAccountsTableRow() {
 
@@ -299,6 +344,8 @@
         if(tRow.value("Account")){
             var account={};
             account.accountNr = tRow.value("Account");
+            account.gr = tRow.value("Gr");
+            account.bClass = tRow.value("BClass");
             account.rowNr = tRow.rowNr;
             accountRows.push(account);
         }
@@ -307,46 +354,30 @@
     return accountRows;
 }
 
-    getTransactionRow(date,transNr,description,accountDebit,accountCredit,amount){
-        var row = {};
-        row.operation = {};
-        row.operation.name = "add";
-        row.fields = {};
-        row.fields["Date"] = date;
-        row.fields["Doc"] = transNr;
-        row.fields["Description"] = description;
-        row.fields["AccountDebit"] = accountDebit;
-        row.fields["AccountCredit"] = accountCredit;
-        row.fields["Amount"] = amount;
+getTransactionRow(date,transNr,description,accountDebit,accountCredit,amount){
+    var row = {};
+    row.operation = {};
+    row.operation.name = "add";
+    row.fields = {};
+    row.fields["Date"] = date;
+    row.fields["Doc"] = transNr;
+    row.fields["Description"] = description;
+    row.fields["AccountDebit"] = accountDebit;
+    row.fields["AccountCredit"] = accountCredit;
+    row.fields["Amount"] = amount;
 
-        return row;
-    }
+    return row;
+}
 
-    getGroupCarriedOver() {
-        var grCarriedOver = {};
-        switch (this.gr) {
-            case "2":
-                grCarriedOver.gr = "120000"
-                grCarriedOver.description = "Résultat net d'exércice (Bénéfice ou perte)";
-                return grCarriedOver;
-            default:
-                return null;
-        }
-    }
+    /******************************************************************************
+     * The methods in this section are used to create groupings, if a template is provided in the package,
+     *  the groups already exist, so these methods are not used.
+     ******************************************************************************/
 
-    getGroupRow_carriedOver(grCarriedOver) {
-        var grRows = {};
-        if (grCarriedOver) {
-            grRows.row = {};
-            grRows.row.operation = {};
-            grRows.row.operation.name = "add";
-            grRows.row.fields = {};
-            grRows.row.fields["Group"] = grCarriedOver.gr;
-            grRows.row.fields["Description"] = grCarriedOver.description;
-            grRows.row.fields["Gr"] = this.bClass;
-        }
-        return grRows;
-    }
+    /**
+     * 
+     * 
+     */
 
     getGroupRow() {
         var grRows = {};
@@ -423,6 +454,10 @@
         return emptyRow;
     }
 
+    /**************************************************
+     * End Section
+     **************************************************/
+
     /**
      * 
      * @param {*} transactionsRows 
@@ -488,32 +523,6 @@
         return bclass;
     }
 
-    getBalanceDiff() {
-        var balanceRows = {};
-        balanceRows.row = {};
-        balanceRows.row.operation = {};
-        balanceRows.row.operation.name = "add";
-        balanceRows.row.fields = {};
-        balanceRows.row.fields["Group"] = "00";
-        balanceRows.row.fields["Description"] = "Différence doit être = 0 (cellule vide)";
-        balanceRows.emptyRow = this.getEmpty
-
-        return balanceRows;
-    }
-    getTotCeRow() {
-        var ceRows = {};
-        ceRows.row = {};
-        ceRows.row.operation = {};
-        ceRows.row.operation.name = "add";
-        ceRows.row.fields = {};
-        ceRows.row.fields["Group"] = "02";
-        ceRows.row.fields["Description"] = "Perte (+) Bénéfice (-) du Compte de Résultat";
-        ceRows.row.fields["Gr"] = "12000";
-        ceRows.emptyRow = this.getEmpty
-
-        return ceRows;
-    }
-
     getJContraAccounGroups(csvFile) {
         var values = [];
         for (var i = 1; i < csvFile.length; i++) {
@@ -564,50 +573,6 @@
 
         return jsonDoc;
 
-    }
-
-    getAccountingInfo() {
-        this.accountingInfo = {};
-        this.accountingInfo.isDoubleEntry = false;
-        this.accountingInfo.isIncomeExpenses = false;
-        this.accountingInfo.isCashBook = false;
-        this.accountingInfo.multiCurrency = false;
-        this.accountingInfo.withVat = false;
-        this.accountingInfo.vatAccount = "";
-        this.accountingInfo.customersGroup = "";
-        this.accountingInfo.suppliersGroup = "";
-
-        if (this.banDocument) {
-            var fileGroup = this.banDocument.info("Base", "FileTypeGroup");
-            var fileNumber = this.banDocument.info("Base", "FileTypeNumber");
-            var fileVersion = this.banDocument.info("Base", "FileTypeVersion");
-
-            if (fileGroup == "100")
-                this.accountingInfo.isDoubleEntry = true;
-            else if (fileGroup == "110")
-                this.accountingInfo.isIncomeExpenses = true;
-            else if (fileGroup == "130")
-                this.accountingInfo.isCashBook = true;
-
-            if (fileNumber == "110") {
-                this.accountingInfo.withVat = true;
-            }
-            if (fileNumber == "120") {
-                this.accountingInfo.multiCurrency = true;
-            }
-            if (fileNumber == "130") {
-                this.accountingInfo.multiCurrency = true;
-                this.accountingInfo.withVat = true;
-            }
-
-            if (this.banDocument.info("AccountingDataBase", "VatAccount"))
-                this.accountingInfo.vatAccount = this.banDocument.info("AccountingDataBase", "VatAccount");
-
-            if (this.banDocument.info("AccountingDataBase", "CustomersGroup"))
-                this.accountingInfo.customersGroup = this.banDocument.info("AccountingDataBase", "CustomersGroup");
-            if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
-                this.accountingInfo.suppliersGroup = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
-        }
     }
 
     getErrorMessage(errorId, lang) {

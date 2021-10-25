@@ -1,4 +1,4 @@
-// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,9 +37,6 @@ function ImportFecFileTest() {
 
 // This method will be called at the beginning of the test case
 ImportFecFileTest.prototype.initTestCase = function() {
-    this.testLogger = Test.logger;
-    this.progressBar = Banana.application.progressBar;
-    this.fileAC2="file:script/../test/testcases/exemple_cd_entreprise.ac2";
 
 }
 
@@ -63,24 +60,30 @@ ImportFecFileTest.prototype.testTransactionsImport = function() {
     var file = Banana.IO.getLocalFile("file:script/../test/testcases/sirenFEC20190109.txt");
     var stringifyFile = JSON.stringify(file.read(), "", "");
     var parsedFile = JSON.parse(stringifyFile);
-    this.testLogger.addCsv("----INITIAL TXT FILE----", parsedFile);
+    Test.logger.addCsv("----INITIAL TXT FILE----", parsedFile);
 
     var csvFile = Banana.Converter.csvToArray(parsedFile, '\t', '');
-    this.testLogger.addText("----CONVERSION TXT TO ARRAY----");
-    this.testLogger.addText(csvFile);
+    Test.logger.addText("----CONVERSION TXT TO ARRAY----");
+    Test.logger.addText(csvFile);
 
 
-    var banDoc = Banana.application.openDocument(this.fileAC2);
+    /**
+     * Should add:
+     *  . 2 new Accounts-->"512101","701001"
+     *  . 9 transactions rows.
+     */
+    var fileAC2="file:script/../test/testcases/exemple_cd_entreprise.ac2";
+    var banDoc = Banana.application.openDocument(fileAC2);
     if (banDoc) {
     var fec_import = new FrAuditFilesImport(banDoc);
-    var format=fec_import.createJsonDocument(csvFile);
+    fec_import.createJsonDocument(csvFile);
     var jsonDoc = { "format": "documentChange", "error": "" };
     jsonDoc["data"] = fec_import.jsonDocArray;
 
-    this.testLogger.addText("----IMPORT TRANSACTIONS WITH DOCUMENT CHANGE STRUCTURE----");
-    this.testLogger.addJson("name", JSON.stringify(jsonDoc));
+    Test.logger.addText("----IMPORT TRANSACTIONS WITH DOCUMENT CHANGE STRUCTURE----");
+    Test.logger.addJson("name", JSON.stringify(jsonDoc));
     }  else {
-        this.testLogger.addFatalError("File not found: " + this.fileAC2);
+        Test.logger.addFatalError("File not found: " + fileAC2);
     }
 
 }

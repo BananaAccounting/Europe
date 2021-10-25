@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.fr.app.fecfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-122
+// @pubdate = 2021-10-25
 // @publisher = Banana.ch SA
 // @description = Importation de fichiers d'enregistrements comptables (FEC) 
 // @description.fr = Importation de fichiers d'enregistrements comptables (FEC)
@@ -80,12 +80,12 @@
 
         var jsonDoc = this.createJsonDocument_Init();
         var lang = this.getLang();
-
+        var trRows=inData;
 
         //import Accounts
-        this.createJsonDocument_AddAccounts(jsonDoc,inData);
+        this.createJsonDocument_AddAccounts(jsonDoc,trRows);
         //import Transactions
-        this.createJsonDocument_AddTransactions(jsonDoc,inData);
+        this.createJsonDocument_AddTransactions(jsonDoc,trRows);
         //Company Info's-->Not available in this kind of file
 
         this.jsonDocArray.push(jsonDoc);
@@ -149,7 +149,7 @@
                 }
 
                 if (checkDebitAmount !== checkCreditAmount) {
-                    Banana.document.addMessage("Debit amount != Credit amount!!!");
+                    this.banDocument.addMessage("Debit amount != Credit amount!!!");
                 }
 
             }        
@@ -173,7 +173,7 @@
                     rows.push(row);
     
                 if (debitAmount !== creditAmount) {
-                    Banana.document.addMessage("Debit amount != Credit amount!!!");
+                    this.banDocument.addMessage("Debit amount != Credit amount!!!");
                 }
             }
 
@@ -331,7 +331,7 @@
 
     getAccountsTableRow() {
 
-    var table = Banana.document.table("Accounts");
+    var table = this.banDocument.table("Accounts");
     if (!table) {
         return;
     }
@@ -607,7 +607,7 @@ getTransactionRow(date,transNr,description,accountDebit,accountCredit,amount){
     }
 
     verifyBananaVersion() {
-        if (!Banana.document)
+        if (!this.banDocument)
             return false;
 
         var lang = this.getLang();
@@ -670,7 +670,6 @@ getTransactionRow(date,transNr,description,accountDebit,accountCredit,amount){
 function exec(inData) {
 
     //Get the txt file and convert to array
-    var fieldSeparator = findSeparator(inData);
     var transactions = Banana.Converter.csvToArray(inData, '\t', '');
 
 

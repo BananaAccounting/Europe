@@ -66,6 +66,7 @@ ImportAccountsTest.prototype.testBananaApps = function() {
     Test.logger.addCsv("----INITIAL TXT FILE----", parsedFile);
 
     var csvFile = Banana.Converter.csvToArray(parsedFile, '\t', '');
+    Banana.console.debug(csvFile.length);
     Test.logger.addText("----CONVERSION TXT TO ARRAY----");
     Test.logger.addText(csvFile);
 

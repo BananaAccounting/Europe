@@ -1,0 +1,248 @@
+Test Banana Apps
+----------------
+
+Date:        2021-10-25 09:41:58.312
+Duration:    00:00:00.035
+Application: BananaPlus 10.0.10.21273
+OS:          Windows 10 Version 2004
+Qt:          5.15.5
+
+Test summary
+------------
+
+Test failed
+
+> Fatal errors:  0
+> Differences:   1
+> Added:         210
+> Deleted:       0
+> Identical:     0
+> Total results: 211
+> Total files:   1
+
+Differences Summary
+-------------------
+
+> Files with differences
+>> testresults/ch.banana.fr.app.fecfileimport.test/ch.banana.fr.app.fecfileimport.test.txt
+
+> Files with results only in current
+>> testresults/ch.banana.fr.app.fecfileimport.test/ch.banana.fr.app.fecfileimport.test.txt
+
+Differences Details
+-------------------
+
+>> testresults/ch.banana.fr.app.fecfileimport.test/ch.banana.fr.app.fecfileimport.test.txt
+			1  + \begin{document}
+			2  + \begin{testcase}{ImportFecFileTest}
+			3  + \begin{test}{testTransactionsImport}
+			4  + \begin{tablevalue}{----INITIAL TXT FILE----}{ l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l  l }
+			5  + JournalCode & JournalLib & EcritureNum & EcritureDate & CompteNum & CompteLib & CompAuxNum & CompAuxLib & PieceRef & PieceDate & EcritureLib & Debit & Credit & EcritureLet & DateLet & ValidDate & Montantdevise & Idevise\\
+			6  + base & Transactions & 3 & 20190105 & 615560 & Matériel de bureau &  &  & 1 & 20190105 & Achat matériel de bureau & 80.00 &  &  &  & 20190105 & 80.00 & EUR\\
+			7  + base & Transactions & 3 & 20190105 & 531100 & Caisse &  &  & 1 & 20190105 & Achat matériel de bureau &  & 80.00 &  &  & 20190105 & -80.00 & EUR\\
+			8  + base & Transactions & 4 & 20190106 & 531100 & Caisse &  &  & 2 & 20190106 & Vente au comptant & 8000.00 &  &  &  & 20190106 & 8000.00 & EUR\\
+			9  + base & Transactions & 4 & 20190106 & 701000 & Ventes de produits finis &  &  & 2 & 20190106 & Vente au comptant &  & 8000.00 &  &  & 20190106 & -8000.00 & EUR\\
+			10  + base & Transactions & 5 & 20190201 & 512100 & Compte courant bancaire &  &  & 3 & 20190201 & Paiement loyer et charges locatives &  & 5000.00 &  &  & 20190201 & -5000.00 & EUR\\
+			11  + base & Transactions & 5 & 20190201 & 613000 & Loyer &  &  & 3 & 20190201 & Loyer & 4000.00 &  &  &  & 20190201 & 4000.00 & EUR\\
+			12  + base & Transactions & 5 & 20190201 & 614000 & Charges locatives et de copropriété &  &  & 3 & 20190201 & Charges locatives et de copropriété & 1000.00 &  &  &  & 20190201 & 1000.00 & EUR\\
+			13  + base & Transactions & 8 & 20190301 & 607000 & Achats de marchandises &  &  & 4 & 20190301 & Achats de marchandises & 600.00 &  &  &  & 20190301 & 600.00 & EUR\\
+			14  + base & Transactions & 8 & 20190301 & 512100 & Compte courant bancaire &  &  & 4 & 20190301 & Achats de marchandises &  & 600.00 &  &  & 20190301 & -600.00 & EUR\\
+			15  + base & Transactions & 9 & 20190402 & 514000 & Compte courant postal &  &  & 5 & 20190402 & Variation des stocks  & 200.00 &  &  &  & 20190402 & 200.00 & EUR\\
+			16  + base & Transactions & 9 & 20190402 & 713000 & Variation des stocks  &  &  & 5 & 20190402 & Variation des stocks  &  & 200.00 &  &  & 20190402 & -200.00 & EUR\\
+			17  + base & Transactions & 10 & 20190402 & 512101 & Test 1  &  &  & 5 & 20190402 & Test: Account 1 &  & 201.00 &  &  & 20190402 & -201.00 & EUR\\
+			18  + base & Transactions & 11 & 20190402 & 701001 & Test 2  &  &  & 5 & 20190402 & Test: Account 2 &  & 202.00 &  &  & 20190402 & -202.00 & EUR\\
+			19  + \\
+			20  + \end{tablevalue}
+			21  + \textvalue{----CONVERSION TXT TO ARRAY----}\\
+			22  + \textvalue{JournalCode,JournalLib,EcritureNum,EcritureDate,CompteNum,CompteLib,CompAuxNum,CompAuxLib,PieceRef,PieceDate,EcritureLib,Debit,Credit,EcritureLet,DateLet,ValidDate,Montantdevise,Idevise,base,Transactions,3,20190105,615560,Matériel de bureau,,,1,20190105,Achat matériel de bureau,80.00,,,,20190105,80.00,EUR,base,Transactions,3,20190105,531100,Caisse,,,1,20190105,Achat matériel de bureau,,80.00,,,20190105,-80.00,EUR,base,Transactions,4,20190106,531100,Caisse,,,2,20190106,Vente au comptant,8000.00,,,,20190106,8000.00,EUR,base,Transactions,4,20190106,701000,Ventes de produits finis,,,2,20190106,Vente au comptant,,8000.00,,,20190106,-8000.00,EUR,base,Transactions,5,20190201,512100,Compte courant bancaire,,,3,20190201,Paiement loyer et charges locatives,,5000.00,,,20190201,-5000.00,EUR,base,Transactions,5,20190201,613000,Loyer,,,3,20190201,Loyer,4000.00,,,,20190201,4000.00,EUR,base,Transactions,5,20190201,614000,Charges locatives et de copropriété,,,3,20190201,Charges locatives et de copropriété,1000.00,,,,20190201,1000.00,EUR,base,Transactions,8,20190301,607000,Achats de marchandises,,,4,20190301,Achats de marchandises,600.00,,,,20190301,600.00,EUR,base,Transactions,8,20190301,512100,Compte courant bancaire,,,4,20190301,Achats de marchandises,,600.00,,,20190301,-600.00,EUR,base,Transactions,9,20190402,514000,Compte courant postal,,,5,20190402,Variation des stocks ,200.00,,,,20190402,200.00,EUR,base,Transactions,9,20190402,713000,Variation des stocks ,,,5,20190402,Variation des stocks ,,200.00,,,20190402,-200.00,EUR,base,Transactions,10,20190402,512101,Test 1 ,,,5,20190402,Test: Account 1,,201.00,,,20190402,-201.00,EUR,base,Transactions,11,20190402,701001,Test 2 ,,,5,20190402,Test: Account 2,,202.00,,,20190402,-202.00,EUR}\\
+			23  + \textvalue{----IMPORT TRANSACTIONS WITH DOCUMENT CHANGE STRUCTURE----}\\
+			24  + \begin{jsonvalue}{name}
+			25  + {
+			26  +     "data": [
+			27  +         {
+			28  +             "creator": {
+			29  +                 "executionDate": "2021-10-25",
+			30  +                 "executionTime": "09:41:00",
+			31  +                 "name": "ch.banana.fr.app.fecfileimport.test",
+			32  +                 "version": "1.0"
+			33  +             },
+			34  +             "document": {
+			35  +                 "dataUnits": [
+			36  +                     {
+			37  +                         "data": {
+			38  +                             "rowLists": [
+			39  +                                 {
+			40  +                                     "rows": [
+			41  +                                         {
+			42  +                                             "fields": {
+			43  +                                                 "Account": "512101",
+			44  +                                                 "BClass": "1",
+			45  +                                                 "Description": "Test 1 ",
+			46  +                                                 "Gr": "A23"
+			47  +                                             },
+			48  +                                             "operation": {
+			49  +                                                 "name": "add",
+			50  +                                                 "sequence": "23.1"
+			51  +                                             }
+			52  +                                         },
+			53  +                                         {
+			54  +                                             "fields": {
+			55  +                                                 "Account": "701001",
+			56  +                                                 "BClass": "4",
+			57  +                                                 "Description": "Test 2 ",
+			58  +                                                 "Gr": "R"
+			59  +                                             },
+			60  +                                             "operation": {
+			61  +                                                 "name": "add",
+			62  +                                                 "sequence": "59.1"
+			63  +                                             }
+			64  +                                         }
+			65  +                                     ]
+			66  +                                 }
+			67  +                             ]
+			68  +                         },
+			69  +                         "nameXml": "Accounts"
+			70  +                     },
+			71  +                     {
+			72  +                         "data": {
+			73  +                             "rowLists": [
+			74  +                                 {
+			75  +                                     "rows": [
+			76  +                                         {
+			77  +                                             "fields": {
+			78  +                                                 "AccountCredit": "531100",
+			79  +                                                 "AccountDebit": "615560",
+			80  +                                                 "Amount": "80.00",
+			81  +                                                 "Date": "2019-01-05",
+			82  +                                                 "Description": "Achat matériel de bureau",
+			83  +                                                 "Doc": "3"
+			84  +                                             },
+			85  +                                             "operation": {
+			86  +                                                 "name": "add"
+			87  +                                             }
+			88  +                                         },
+			89  +                                         {
+			90  +                                             "fields": {
+			91  +                                                 "AccountCredit": "701000",
+			92  +                                                 "AccountDebit": "531100",
+			93  +                                                 "Amount": "8000.00",
+			94  +                                                 "Date": "2019-01-06",
+			95  +                                                 "Description": "Vente au comptant",
+			96  +                                                 "Doc": "4"
+			97  +                                             },
+			98  +                                             "operation": {
+			99  +                                                 "name": "add"
+			100  +                                             }
+			101  +                                         },
+			102  +                                         {
+			103  +                                             "fields": {
+			104  +                                                 "AccountCredit": "512100",
+			105  +                                                 "AccountDebit": "",
+			106  +                                                 "Amount": "5000.00",
+			107  +                                                 "Date": "2019-02-01",
+			108  +                                                 "Description": "Paiement loyer et charges locatives",
+			109  +                                                 "Doc": "5"
+			110  +                                             },
+			111  +                                             "operation": {
+			112  +                                                 "name": "add"
+			113  +                                             }
+			114  +                                         },
+			115  +                                         {
+			116  +                                             "fields": {
+			117  +                                                 "AccountCredit": "",
+			118  +                                                 "AccountDebit": "613000",
+			119  +                                                 "Amount": "4000.00",
+			120  +                                                 "Date": "2019-02-01",
+			121  +                                                 "Description": "Loyer",
+			122  +                                                 "Doc": "5"
+			123  +                                             },
+			124  +                                             "operation": {
+			125  +                                                 "name": "add"
+			126  +                                             }
+			127  +                                         },
+			128  +                                         {
+			129  +                                             "fields": {
+			130  +                                                 "AccountCredit": "",
+			131  +                                                 "AccountDebit": "614000",
+			132  +                                                 "Amount": "1000.00",
+			133  +                                                 "Date": "2019-02-01",
+			134  +                                                 "Description": "Charges locatives et de copropriété",
+			135  +                                                 "Doc": "5"
+			136  +                                             },
+			137  +                                             "operation": {
+			138  +                                                 "name": "add"
+			139  +                                             }
+			140  +                                         },
+			141  +                                         {
+			142  +                                             "fields": {
+			143  +                                                 "AccountCredit": "512100",
+			144  +                                                 "AccountDebit": "607000",
+			145  +                                                 "Amount": "600.00",
+			146  +                                                 "Date": "2019-03-01",
+			147  +                                                 "Description": "Achats de marchandises",
+			148  +                                                 "Doc": "8"
+			149  +                                             },
+			150  +                                             "operation": {
+			151  +                                                 "name": "add"
+			152  +                                             }
+			153  +                                         },
+			154  +                                         {
+			155  +                                             "fields": {
+			156  +                                                 "AccountCredit": "713000",
+			157  +                                                 "AccountDebit": "514000",
+			158  +                                                 "Amount": "200.00",
+			159  +                                                 "Date": "2019-04-02",
+			160  +                                                 "Description": "Variation des stocks ",
+			161  +                                                 "Doc": "9"
+			162  +                                             },
+			163  +                                             "operation": {
+			164  +                                                 "name": "add"
+			165  +                                             }
+			166  +                                         },
+			167  +                                         {
+			168  +                                             "fields": {
+			169  +                                                 "AccountCredit": "512101",
+			170  +                                                 "AccountDebit": "",
+			171  +                                                 "Amount": "",
+			172  +                                                 "Date": "2019-04-02",
+			173  +                                                 "Description": "Test: Account 1",
+			174  +                                                 "Doc": "10"
+			175  +                                             },
+			176  +                                             "operation": {
+			177  +                                                 "name": "add"
+			178  +                                             }
+			179  +                                         },
+			180  +                                         {
+			181  +                                             "fields": {
+			182  +                                                 "AccountCredit": "701001",
+			183  +                                                 "AccountDebit": "",
+			184  +                                                 "Amount": "",
+			185  +                                                 "Date": "2019-04-02",
+			186  +                                                 "Description": "Test: Account 2",
+			187  +                                                 "Doc": "11"
+			188  +                                             },
+			189  +                                             "operation": {
+			190  +                                                 "name": "add"
+			191  +                                             }
+			192  +                                         }
+			193  +                                     ]
+			194  +                                 }
+			195  +                             ]
+			196  +                         },
+			197  +                         "nameXml": "Transactions"
+			198  +                     }
+			199  +                 ],
+			200  +                 "dataUnitsfileVersion": "1.0.0"
+			201  +             }
+			202  +         }
+			203  +     ],
+			204  +     "error": "",
+			205  +     "format": "documentChange"
+			206  + }
+			207  + \end{jsonvalue}
+			208  + \keyvalue{Result}{Passed}
+			209  + \end{test}
+			210  + \end{testcase}
+			211  + \end{document}
+			 1 - 
+

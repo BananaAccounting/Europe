@@ -10,5 +10,5 @@ base	Transactions	8	20190301	607000	Achats de marchandises			4	20190301	Achats d
 base	Transactions	8	20190301	512100	Compte courant bancaire			4	20190301	Achats de marchandises		600.00			20190301	-600.00	EUR
 base	Transactions	9	20190402	514000	Compte courant postal			5	20190402	Variation des stocks 	200.00				20190402	200.00	EUR
 base	Transactions	9	20190402	713000	Variation des stocks 			5	20190402	Variation des stocks 		200.00			20190402	-200.00	EUR
-base	Transactions	9	20190402	512101	Test 1 			5	20190402	Test: Account 1		201.00			20190402	-201.00	EUR
-base	Transactions	9	20190402	701001	Test 2 			5	20190402	Test: Account 2		202.00			20190402	-202.00	EUR
+base	Transactions	10	20190402	512101	Test 1 			5	20190402	Test: Account 1		201.00			20190402	-201.00	EUR
+base	Transactions	11	20190402	701001	Test 2 			5	20190402	Test: Account 2		202.00			20190402	-202.00	EUR

@@ -3,8 +3,8 @@
     "countryCode": "fr",
     "description": "Import FEC Files with Document Change",
     "docUri": "",
-    "fileExtension": "csv",
-    "mimeType": "text/csv",
+    "fileExtension": "txt",
+    "mimeType": "text/txt",
     "script": {
         "function": "exec",
         "uri": "creator.js"

@@ -1,0 +1,650 @@
+%%info_test_name{ch.banana.no.app.auditfileimport.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{C:/P/Europe/Norway/saf-t/importapps_DocChange/./test/ch.banana.no.app.auditfileimport.test.js}
+%
+\begin{testcase}{ImportFileSafFileTest}
+\begin{test}{testDoChange}
+\textvalue{----IMPORT FILE WITH DOCUMENT CHANGE STRUCTURE----}\\
+\begin{jsonvalue}{name}
+{
+    "data": [
+        {
+            "creator": {
+                "name": "ch.banana.no.app.auditfileimport.test",
+                "version": "1.0"
+            },
+            "document": {
+                "dataUnits": [
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        {
+                                            "fields": {
+                                                "IdXml": "HeaderLeft",
+                                                "SectionXml": "Base",
+                                                "ValueXml": "Selskapet AS 999999999"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "HeaderRight",
+                                                "SectionXml": "Base",
+                                                "ValueXml": "Veien 1, Trondheim,7000, Sør-Trøndelag"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "OpeningDate",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": ""
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "ClosureDate",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": ""
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "BasicCurrency",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "NOK"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "Company",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "Selskapet AS"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "Address1",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "Veien 1"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "City",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "Trondheim"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "State",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "Sør-Trøndelag"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "CountryCode",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": "NO"
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "IdXml": "FiscalNumber",
+                                                "SectionXml": "AccountingDataBase",
+                                                "ValueXml": ""
+                                            },
+                                            "operation": {
+                                                "name": "modify",
+                                                "srcFileName": "0"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "FileInfo"
+                    },
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        null,
+                                        null,
+                                        null,
+                                        {
+                                            "fields": {
+                                                "Description": "",
+                                                "Gr": "",
+                                                "Group": ""
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Account": "1925",
+                                                "BClass": "1",
+                                                "Description": "Bankkonto 1234.56.78911",
+                                                "Gr": "19",
+                                                "Opening": "1234.56"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        null,
+                                        {
+                                            "fields": {
+                                                "Description": "Kontanter, bankinnskudd ol",
+                                                "Gr": "1.1",
+                                                "Group": "19"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "EIENDELER",
+                                                "Gr": "00",
+                                                "Group": "1.1"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Account": "2400",
+                                                "BClass": "2",
+                                                "Description": "Leverandørgjeld",
+                                                "Gr": "24",
+                                                "Opening": "-1234.56"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        null,
+                                        {
+                                            "fields": {
+                                                "Description": "Leverandørgjeld",
+                                                "Gr": "2.2",
+                                                "Group": "24"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Account": "2740",
+                                                "BClass": "2",
+                                                "Description": "MVA-konto",
+                                                "Gr": "27",
+                                                "Opening": "-1234.56"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "ÅRSRESULTAT",
+                                                "Gr": "27",
+                                                "Group": "0511"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "Skyldige offentlige avgifte",
+                                                "Gr": "2.2",
+                                                "Group": "27"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "EGENKAPITAL OG GJELD",
+                                                "Gr": "00",
+                                                "Group": "2.2"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Account": "4000",
+                                                "BClass": "3",
+                                                "Description": "Varekjøp",
+                                                "Gr": "43",
+                                                "Opening": "0"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "Forbruk av varer for videresalg",
+                                                "Gr": "3.3",
+                                                "Group": "43"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "SALGS- OG DRIFRSINNTEKT",
+                                                "Gr": "02",
+                                                "Group": "3.3"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "ÅRSRESULTAT",
+                                                "Gr": "0511",
+                                                "Group": "02"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        null,
+                                        {
+                                            "fields": {
+                                                "Description": "Skillnaden måste vara noll (tom cell)",
+                                                "Group": "00"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "Accounts"
+                    },
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        {
+                                            "fields": {
+                                                "Account": "12000",
+                                                "BClass": "1",
+                                                "BankIban": "NO4912345678911",
+                                                "CountryCode": "NO",
+                                                "Description": "Kunden AS",
+                                                "EmailWork": "kontaktperson@domene.offline",
+                                                "FamilyName": "",
+                                                "Fax": "99999999",
+                                                "FirstName": "",
+                                                "Gr": "DEB",
+                                                "Locality": "Trondheim",
+                                                "NamePrefix": "",
+                                                "Opening": "1234.56",
+                                                "PhoneMain": "99999999",
+                                                "PostalCode": "7000",
+                                                "Street": "Veien 1",
+                                                "Website": "http://www.domene.offline/"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "EIENDELER",
+                                                "Gr": "",
+                                                "Group": "DEB"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "Accounts"
+                    },
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        {
+                                            "fields": {
+                                                "Account": "20000",
+                                                "BClass": "2",
+                                                "BankIban": "",
+                                                "CountryCode": "NO",
+                                                "Description": "Leverandøren AS",
+                                                "EmailWork": "kontaktperson@domene.offline",
+                                                "FamilyName": "",
+                                                "Fax": "99999999",
+                                                "FirstName": "",
+                                                "Gr": "CRE",
+                                                "Locality": "Trondheim",
+                                                "NamePrefix": "",
+                                                "Opening": "-1234.56",
+                                                "PhoneMain": "99999999",
+                                                "PostalCode": "7000",
+                                                "Street": "Veien",
+                                                "Website": "http://www.domene.offline/"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "Description": "EGENKAPITAL OG GJELD",
+                                                "Gr": "",
+                                                "Group": "CRE"
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "Accounts"
+                    },
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        {
+                                            "fields": {
+                                                "AccountCredit": "",
+                                                "AccountDebit": "4000",
+                                                "Amount": "10000",
+                                                "Date": "2015-10-31",
+                                                "Description": "Faktura 123456, Faktura 123456",
+                                                "Doc": "4567",
+                                                "VatCode": "[14]"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "AccountCredit": "",
+                                                "AccountDebit": "2740",
+                                                "Amount": "2500",
+                                                "Date": "2015-10-31",
+                                                "Description": "Faktura 123456, Beregnet MVA",
+                                                "Doc": "4567",
+                                                "VatCode": ""
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "AccountCredit": "2400",
+                                                "AccountDebit": "",
+                                                "Amount": "12500",
+                                                "Date": "2015-10-31",
+                                                "Description": "Faktura 123456, Faktura 123456",
+                                                "Doc": "4567",
+                                                "VatCode": ""
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "AccountCredit": "",
+                                                "AccountDebit": "2400",
+                                                "Amount": "12500",
+                                                "Date": "2015-10-31",
+                                                "Description": "Bilag 5678, Bank",
+                                                "Doc": "5678",
+                                                "VatCode": ""
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                                "AccountCredit": "1925",
+                                                "AccountDebit": "",
+                                                "Amount": "12500",
+                                                "Date": "2015-10-31",
+                                                "Description": "Bilag 5678, Bank",
+                                                "Doc": "5678",
+                                                "VatCode": ""
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        },
+                                        {
+                                            "fields": {
+                                            },
+                                            "operation": {
+                                                "name": "add"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "Transactions"
+                    },
+                    {
+                        "data": {
+                            "rowLists": [
+                                {
+                                    "rows": [
+                                        {
+                                            "fields": {
+                                                "AmountType": "",
+                                                "Description": "Inngående avgift, høy sats",
+                                                "VatCode": "14",
+                                                "VatRate": "25"
+                                            },
+                                            "operation": {
+                                                "name": "add",
+                                                "srcFileName": "0"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "nameXml": "VatCodes"
+                    }
+                ],
+                "dataUnitsfileVersion": "1.0.0"
+            }
+        }
+    ],
+    "error": "",
+    "format": "documentChange"
+}
+\end{jsonvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

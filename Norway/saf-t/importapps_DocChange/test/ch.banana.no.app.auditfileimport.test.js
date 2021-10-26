@@ -57,17 +57,25 @@ ImportFileSafFileTest.prototype.cleanup = function() {
 ImportFileSafFileTest.prototype.testDoChange = function() {
 
     var fileXml = Banana.IO.getLocalFile("file:script/../test/testcases/example_file_saft_financial.xml");
-    var parsedfile = JSON.stringify(fileXml.read(), "", "");
-    var xmlfile = JSON.parse(parsedfile);
+    let fileContent = fileXml.read();
+    if (fileContent.errorString) {
+        Banana.Ui.showInformation("Read error", fileContent.errorString);
+    } else {
+        Banana.Ui.showInformation("OK", fileContent);
+    }
+    // var parsedfile = JSON.stringify(fileXml.read(), "", "");
+    // var xmlfile = JSON.parse(parsedfile);
 
 
-    if (xmlfile) {
+    if (fileContent) {
         Test.logger.addText("----IMPORT FILE WITH DOCUMENT CHANGE STRUCTURE----");
         var fileAC2 = "file:script/../test/testcases/Double-entry with VAT-Sales tax - 1.ac2";
         var banDoc = Banana.application.openDocument(fileAC2);
         if (banDoc) {
             var noAuditFilesImport = new NoAuditFilesImport(banDoc);
-            noAuditFilesImport.createJsonDocument(xmlfile);
+            var sourceFiles = [];
+            sourceFiles.push(fileContent);
+            noAuditFilesImport.createJsonDocument(sourceFiles);
             var jsonDoc = { "format": "documentChange", "error": "" };
             jsonDoc["data"] = noAuditFilesImport.jsonDocArray;
 

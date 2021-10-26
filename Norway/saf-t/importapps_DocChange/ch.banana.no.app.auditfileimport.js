@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.no.app.auditfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-19
+// @pubdate = 2021-10-26
 // @publisher = Banana.ch SA
 // @description = Norway Import Audit File (BETA)
 // @doctype = *
@@ -72,8 +72,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             //seleziona singolo file xml
             var xmlFile = Banana.Xml.parse(inData[srcFileName]);
             if (!xmlFile) {
-                //IL TEST SI BLOCCA QUI
-                Banana.console.debug("stop");
                 return jsonDoc;
             }
 
@@ -1532,8 +1530,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var d = new Date();
         var datestring = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
         var timestring = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-        jsonDoc.creator.executionDate = Banana.Converter.toInternalDateFormat(datestring, "yyyymmdd");
-        jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring, "hh:mm");
+        //jsonDoc.creator.executionDate = Banana.Converter.toInternalDateFormat(datestring, "yyyymmdd");
+        //jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring, "hh:mm");
         jsonDoc.creator.name = Banana.script.getParamValue('id');
         jsonDoc.creator.version = "1.0";
 

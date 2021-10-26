@@ -1,0 +1,53 @@
+Test Banana Apps
+----------------
+
+Date:        2021-10-26 08:23:17.346
+Duration:    00:00:00.040
+Application: BananaPlus 10.0.10.21273
+OS:          Windows 10 Version 2004
+Qt:          5.15.5
+
+Test summary
+------------
+
+Test failed
+
+> Fatal errors:  0
+> Differences:   1
+> Added:         15
+> Deleted:       0
+> Identical:     0
+> Total results: 16
+> Total files:   1
+
+Differences Summary
+-------------------
+
+> Files with differences
+>> testresults/ch.banana.no.app.auditfileimport.test/ch.banana.no.app.auditfileimport.test.txt
+
+> Files with results only in current
+>> testresults/ch.banana.no.app.auditfileimport.test/ch.banana.no.app.auditfileimport.test.txt
+
+Differences Details
+-------------------
+
+>> testresults/ch.banana.no.app.auditfileimport.test/ch.banana.no.app.auditfileimport.test.txt
+			1  + \begin{document}
+			2  + \begin{testcase}{ImportFileSafFileTest}
+			3  + \begin{test}{testDoChange}
+			4  + \textvalue{----IMPORT FILE WITH DOCUMENT CHANGE STRUCTURE----}\\
+			5  + \begin{jsonvalue}{name}
+			6  + {
+			7  +     "data": [
+			8  +     ],
+			9  +     "error": "",
+			10  +     "format": "documentChange"
+			11  + }
+			12  + \end{jsonvalue}
+			13  + \keyvalue{Result}{Passed}
+			14  + \end{test}
+			15  + \end{testcase}
+			16  + \end{document}
+			 1 - 
+

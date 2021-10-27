@@ -57,12 +57,25 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
 
     }
+    /**
+     * Creates the DocumentChange for the creation of new columns.
+     * This change must be done before the data are imported,
+     * otherwise data will be imported in non-existent columns.
+     */
+    createJsonDocumentColumns(){
+        var jsonDoc = this.createJsonDocument_Init();
+
+            this.createJsonDocument_AddBalanceColumns(jsonDoc);
+            this.jsonDocArray.push(jsonDoc);
+
+            //Banana.Ui.showText(JSON.stringify(jsonDoc));
+    }
 
     /**
-     * creates the json document.
+     * Creates the DocumentChange for the import of the data.
      * @param {*} inData imported file
      */
-    createJsonDocument(inData) {
+    createJsonDocumentData(inData) {
 
         var jsonDoc = this.createJsonDocument_Init();
         var lang = this.getLang();
@@ -93,7 +106,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             /*********************************************************************
              * ADD THE ACCOUNTS
              *********************************************************************/
+            
             this.createJsonDocument_AddAccounts(jsonDoc, srcFileName, masterFilesNode);
+
             //Controllo che il dare e l'avere nel file xml coincida, sia per quanto riguarda i conti d'apertura che le registrazioni
             this.checkDebitCredit(this.openingDebitBalance, this.openingCreditBalance, "opening");
             this.checkDebitCredit(this.closingDebitBalance, this.closingCreditBalance, "closing");
@@ -167,7 +182,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
-
+    /**
+     * Returns the error message
+     * @param {*} errorId 
+     * @param {*} difference 
+     * @returns 
+     */
     getInvoiceErrorMessage(errorId, difference) {
             switch (errorId) {
                 case this.ID_ERR_OPENING_DEBIT_CREDIT_WITH_DIFFERENCES:
@@ -179,12 +199,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             }
             return '';
         }
-        /**
-         * create the json structure to add the company information in the properties of the banana file
-         * @param {*} jsonDoc json object already initialised with some values 
-         * @param {*} srcFileName name of the audit file
-         * @param {*} headerNode node from which I start deriving the values 
-         */
+
+    /**
+     * create the json structure to add the company information in the properties of the banana file
+     * @param {*} jsonDoc json object already initialised with some values 
+     * @param {*} srcFileName name of the audit file
+     * @param {*} headerNode node from which I start deriving the values 
+     */
     createJsonDocument_AddFileProperties(jsonDoc, srcFileName, headerNode) {
 
         var rows = [];
@@ -327,7 +348,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     }
 
     /**
-     * 
      * create the json structure to add the vat codes in the vat table
      * @param {*} jsonDoc json object already initialised with some values 
      * @param {*} srcFileName name of the audit file
@@ -531,7 +551,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     rows.push(row);
 
 
-
                     lineNode = lineNode.nextSiblingElement('n1:Line'); // Next trLine
                 }
 
@@ -646,7 +665,42 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
+    /**
+     * Adds two colums in the Accounts table
+     * First column: Balance File--> The Balance calculated with the information in the xml file.
+     * Second column: Balance Difference--> The Difference between the balance calculated in banana and the balance calculated with the xml file info.
+     * @param {*} jsonDoc json object already initialised with some values 
+     */
+     createJsonDocument_AddBalanceColumns(jsonDoc){
+        var columns=[];
 
+        //first Column
+        var balanceFileCol = {};
+        balanceFileCol.operation = {};
+        balanceFileCol.operation.name = "add";
+        balanceFileCol.nameXml="BalanceFromFile";
+        balanceFileCol.header1="Balance file";
+        balanceFileCol.definition={};
+        balanceFileCol.definition.type="amount";
+        columns.push(balanceFileCol);
+
+        //second Column
+        /*var balanceDiffCol = {};
+        balanceDiffCol.operation = {};
+        balanceDiffCol.operation.name = "add";
+        balanceDiffCol.nameXml="BalanceDifferenceFromFile";
+        balanceDiffCol.header1="Balance Difference";
+        columns.push(balanceDiffCol);*/
+
+        var dataUnitFilePorperties = {};
+        dataUnitFilePorperties.nameXml = "Accounts";
+        dataUnitFilePorperties.data = {};
+        dataUnitFilePorperties.data.viewList = {};
+        dataUnitFilePorperties.data.viewList.views = [];
+        dataUnitFilePorperties.data.viewList.views.push({ "columns": columns });
+
+        jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+    }
 
     /**
      * create the json structure to add the accounts in the Accounts table
@@ -760,6 +814,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             row.fields["BClass"] = bclass;
             row.fields["Gr"] = gr;
             row.fields["Opening"] = opening;
+            row.fields["BalanceFromFile"] = closing;
 
 
             rows.push(row);
@@ -826,6 +881,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 var accountType = ""; // DEB(costumers) if accountId is a passive Account, CRED(suppliers)
                 var accountDescription = "";
                 var accountOpening = "";
+                var accountClosing = "";
                 var gr = "";
                 var bclass = "";
                 var nameprefix = "";
@@ -855,6 +911,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 if (xmlNode.hasChildElements('n1:Name'))
                     accountDescription = xmlNode.firstChildElement('n1:Name').text;
 
+                //Opening balance
                 if (xmlNode.hasChildElements('n1:OpeningDebitBalance') || xmlNode.hasChildElements('n1:OpeningCreditBalance')) {
                     if (xmlNode.hasChildElements('n1:OpeningDebitBalance')) {
                         accountOpening = xmlNode.firstChildElement('n1:OpeningDebitBalance').text;
@@ -864,6 +921,19 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                             accountOpening = Banana.SDecimal.invert(xmlNode.firstChildElement('n1:OpeningCreditBalance').text);
                         } else {
                             accountOpening = openingValue; // 0
+                        }
+                    }
+                }
+
+                if (xmlNode.hasChildElements('n1:ClosingDebitBalance') || xmlNode.hasChildElements('n1:ClosingCreditBalance')) {
+                    if (xmlNode.hasChildElements('n1:ClosingDebitBalance')) {
+                        accountClosing = xmlNode.firstChildElement('n1:ClosingDebitBalance').text;
+                    } else if (xmlNode.hasChildElements('n1:ClosingCreditBalance')) {
+                        var openingValue = xmlNode.firstChildElement('n1:ClosingCreditBalance').text;
+                        if (openingValue !== "0") {
+                            accountClosing = Banana.SDecimal.invert(xmlNode.firstChildElement('n1:ClosingCreditBalance').text);
+                        } else {
+                            accountClosing = openingValue; // 0
                         }
                     }
                 }
@@ -917,6 +987,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 row.fields["BClass"] = bclass;
                 row.fields["Gr"] = gr;
                 row.fields["Opening"] = accountOpening;
+                row.fields["BalanceFromFile"] = accountOpening;
                 row.fields["NamePrefix"] = nameprefix;
                 row.fields["FirstName"] = firstname;
                 row.fields["FamilyName"] = familyname;
@@ -955,11 +1026,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
 
         }
-        /**
-         * sets the account type for customers and suppliers
-         * @param {*} accountId 
-         * @returns 
-         */
+
+    /**
+     * sets the account type for customers and suppliers
+     * @param {*} accountId 
+     * @returns 
+     */
     setAccountType(accountId) {
         var accType = "";
         if (accountId.substr(0, 1) == "2")
@@ -1439,10 +1511,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     return descr;
             }
         }
-        /**
-         * creates the line for the profit and loss account result
-         * @returns 
-         */
+
+    /**
+     * creates the line for the profit and loss account result
+     * @returns 
+     */
     getTotCeRow() {
         var ceRows = {};
         ceRows.row = {};
@@ -1472,10 +1545,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             return balanceRows;
         }
-        /**
-         * creates an empty row
-         * @returns
-         */
+
+    /**
+     * creates an empty row
+     * @returns
+     */
     getEmptyRow() {
         var emptyRow = {};
         emptyRow.operation = {};
@@ -1485,7 +1559,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return emptyRow;
     }
 
-    // Return the BClass for the given account
+    /**
+     * Return the BClass for the given account
+     * @param {*} account 
+     * @returns 
+     */
     setBClassByAccount(account) {
 
         /*  
@@ -1539,6 +1617,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
     }
 
+    /**
+     * Returns the info from the accounting file
+     */
     getAccountingInfo() {
         this.accountingInfo = {};
         this.accountingInfo.isDoubleEntry = false;
@@ -1583,6 +1664,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         }
     }
 
+    /**
+     * Returns the error message
+     * @param {*} errorId 
+     * @param {*} lang 
+     * @returns 
+     */
     getErrorMessage(errorId, lang) {
         if (!lang)
             lang = 'en';
@@ -1597,6 +1684,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         }
     }
 
+    /**
+     * Returns true if the version of Banana is advanced
+     * @returns 
+     */
     isBananaAdvanced() {
         // Starting from version 10.0.7 it is possible to read the property Banana.application.license.isWithinMaxRowLimits 
         // to check if all application functionalities are permitted
@@ -1614,6 +1705,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return false;
     }
 
+    /**
+     * Verify the Banana version
+     * @returns 
+     */
     verifyBananaVersion() {
         if (!this.banDocument)
             return false;
@@ -1631,6 +1726,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         return true;
     }
 
+
+    /**
+     * Returns the language code
+     * @returns 
+     */
     getLang() {
         var lang = 'en';
         if (this.banDocument)
@@ -1643,6 +1743,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     }
 }
 
+/**
+ * Executes the script
+ * @param {*} inData 
+ * @returns 
+ */
 function exec(inData) {
 
     if (!Banana.document || inData.length <= 0) {
@@ -1665,7 +1770,8 @@ function exec(inData) {
     if (!jsonData)
         return "@Cancel";
 
-    noAuditFilesImport.createJsonDocument(jsonData);
+        noAuditFilesImport.createJsonDocumentColumns();
+        noAuditFilesImport.createJsonDocumentData(jsonData);
 
     var jsonDoc = { "format": "documentChange", "error": "" };
     jsonDoc["data"] = noAuditFilesImport.jsonDocArray;

@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.no.app.auditfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-26
+// @pubdate = 2021-10-28
 // @publisher = Banana.ch SA
 // @description = Norway Import Audit File (BETA)
 // @doctype = *
@@ -32,18 +32,14 @@ function setup() {
 var NoAuditFilesImport = class NoAuditFilesImport {
     constructor(banDocument) {
         this.version = '1.0';
-        this.isAdvanced = this.isBananaAdvanced();
+        this.isAdvanced = true;
         this.banDocument = banDocument;
         this.jsonDocArray = [];
         this.ccList = [];
-        this.gr = "";
-        this.bClass = "";
-        this.accType = "";
-        this.transId = "";
         this.analysisType = "";
         this.openingCreditBalance = "";
         this.openingDebitBalance = "",
-            this.closingDebitBalance = "";
+        this.closingDebitBalance = "";
         this.closingCreditBalance = "";
         this.transTotalCredit = "";
         this.transTotalDebit = "";
@@ -82,7 +78,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         for (var srcFileName in inData) {
 
-            //seleziona singolo file xml
+            //select the single xml file
             var xmlFile = Banana.Xml.parse(inData[srcFileName]);
             if (!xmlFile) {
                 return jsonDoc;
@@ -422,7 +418,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         while (journalNode) {
 
+            
             var transactionNode = journalNode.firstChildElement('n1:Transaction'); // First transaction
+            var transId="";
+
             while (transactionNode) {
 
                 var trId = "";
@@ -557,16 +556,16 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 transactionNode = transactionNode.nextSiblingElement('n1:Transaction'); // Next transaction
 
                 //add an empty row every new block of transactions
-                if (this.transId !== trId) {
+                if (transId !== trId) {
                     var emptyRow = this.getEmptyRow();
                     rows.push(emptyRow);
                 }
-                this.transId = trId;
+                transId = trId;
             }
             journalNode = journalNode.nextSiblingElement('n1:Journal'); // Next journal
         }
 
-        //se non è la versione advanced,limito le registrazioni importate a 100 righe
+        //if it is not the advanced version, I limit the imported records to 100 rows
         if (!this.isAdvanced) {
             rows = rows.slice(0, 100);
         }
@@ -595,6 +594,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var AnalysisTypeTableEntry = "";
         var costAndProfitCenterNumber = 0;
         var costAndProfitCenterPrefix = ".";
+        var _gr="";
 
         AnalysisTypeTable = masterFilesNode.firstChildElement('n1:AnalysisTypeTable');
         AnalysisTypeTableEntry = AnalysisTypeTable.firstChildElement('n1:AnalysisTypeTableEntry');
@@ -614,11 +614,11 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             analysisIDDescription = AnalysisTypeTableEntry.firstChildElement('n1:AnalysisIDDescription').text;
 
 
-            if (this.gr !== analysisType && this.gr !== "") {
+            if (_gr !== analysisType && _gr !== "") {
                 var grRows = this.getGroupRow();
                 rows.push(grRows.row);
                 rows.push(grRows.emptyRow);
-                //ogni volta che cambia gruppo significa che ho un centro di costo nuovo (per un massimo di tre)
+                //each time the group changes it means I have a new cost centre (for a maximum of three)
                 costAndProfitCenterNumber++
                 costAndProfitCenterPrefix = this.setCCPrefix(costAndProfitCenterNumber);
             }
@@ -640,7 +640,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             rows.push(row);
 
-            this.gr = analysisType;
+            _gr = analysisType;
 
             AnalysisTypeTableEntry = AnalysisTypeTableEntry.nextSiblingElement('n1:AnalysisTypeTableEntry');
 
@@ -649,8 +649,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var grRows = this.getGroupRow();
         rows.push(grRows.row);
         rows.push(grRows.emptyRow);
-
-        this.gr = "";
 
 
         var dataUnitFilePorperties = {};
@@ -716,6 +714,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var rows = [];
         var GeneralLedgerAccountsNode = "";
         var accountNode = "";
+        var _gr="";
+        var _accType="";
+        var _bClass="";
 
         GeneralLedgerAccountsNode = masterFilesNode.firstChildElement('n1:GeneralLedgerAccounts');
         accountNode = GeneralLedgerAccountsNode.firstChildElement('n1:Account');
@@ -726,7 +727,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             var accountDescription = "";
             var accType = "";
             var gr = "";
-            var bclass = "";
+            var bClass = "";
             var totalGr = "";
             var opening = "";
             var closing = "";
@@ -738,9 +739,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 accountDescription = accountNode.firstChildElement('n1:AccountDescription').text;
 
             /**
-             * come scritto nella documentazione ufficiale, per mappare i conti in raggruppamenti posso usare l'elemento 'StandardAccountID', o in sua 
-             * assenza posso utilizzare 'GroupingCode' o 'GroupingCategory '
-             * Incremento il contatore debitBalance o creditBalance, in modo da poter controllare alla fine se coincidono.
+             * as written in the official documentation, to map accounts into groupings I can use the 'StandardAccountID' element, or in its * absence I can use 'GroupingCode' or 'GroupingCategory'. 
+             * absence I can use 'GroupingCode' or 'GroupingCategory'.
+             * I increment the debitBalance or creditBalance counter, so that I can check at the end if they match.
              */
             if (accountNode.hasChildElements('n1:StandardAccountID'))
                 gr = accountNode.firstChildElement('n1:StandardAccountID').text;
@@ -750,7 +751,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             if (accountNode.hasChildElements('n1:AccountType'))
                 accType = accountNode.firstChildElement('n1:AccountType').text;
 
-            bclass = this.setBClassByAccount(accountNumber);
+            bClass = this.setBClassByAccount(accountNumber);
 
 
             //opening balance
@@ -783,22 +784,23 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     }
                     this.closingCreditBalance = Banana.SDecimal.add(this.closingCreditBalance, closing);
                 }
+                closing=Banana.SDecimal.round(closing,{'decimals': 2});
             }
 
             //if the group change, we create a grouping row, same with the bclass
-            if (this.gr != gr) {
+            if (_gr != gr) {
                 //carried over groups
-                var grCarriedOver = this.setGroupCarriedOver(this.gr);
-                var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver);
+                var grCarriedOver = this.setGroupCarriedOver(_gr);
+                var grCarrOverRows = this.getGroupRow_carriedOver(grCarriedOver,_gr);
                 rows.push(grCarrOverRows.row);
                 //normal groups
-                var grRows = this.getGroupRow(this.accType);
+                var grRows = this.getGroupRow(_accType,_gr,_bClass);
                 rows.push(grRows.row);
                 rows.push(grRows.emptyRow);
             }
 
-            if (this.bClass != bclass) {
-                var secRows = this.getSectionRow(this.accType);
+            if (_bClass != bClass) {
+                var secRows = this.getSectionRow(_accType,_bClass);
                 rows.push(secRows.row);
                 rows.push(secRows.emptyRow);
             }
@@ -811,7 +813,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             row.fields = {};
             row.fields["Account"] = accountNumber;
             row.fields["Description"] = accountDescription;
-            row.fields["BClass"] = bclass;
+            row.fields["BClass"] = bClass;
             row.fields["Gr"] = gr;
             row.fields["Opening"] = opening;
             row.fields["BalanceFromFile"] = closing;
@@ -819,37 +821,33 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
             rows.push(row);
 
-            this.gr = gr;
-            this.bClass = bclass;
-            this.accType = accType;
+            _gr = gr;
+            _bClass = bClass;
+            _accType = accType;
 
 
             accountNode = accountNode.nextSiblingElement('n1:Account');
         }
 
-        //alla fine aggiungo ancora il raggruppamento e la sezione finale riprendendo gli ultimi elementi salvati
+        //at the end I add again the grouping and the final section by taking over the last saved elements
         //last group
-        var grRows = this.getGroupRow(accType);
+        var grRows = this.getGroupRow(accType,gr,bClass);
         rows.push(grRows.row);
         rows.push(grRows.emptyRow);
         //last section
-        var secRows = this.getSectionRow(accType);
+        var secRows = this.getSectionRow(accType,bClass);
         rows.push(secRows.row);
         rows.push(secRows.emptyRow);
 
-        //aggiungo il totale del CE (utile o perdita)
+        //add the profit and loss result group
         var totCeRow = this.getTotCeRow();
         rows.push(totCeRow.row);
         rows.push(totCeRow.emptyRow);
 
-        //aggiungo la differenza del Bilancio (dovrebbe essere zero)
+        //add the balance result row (should be 0)
         var balanceDiff = this.getBalanceDiff();
         rows.push(balanceDiff.row);
         rows.push(balanceDiff.emptyRow);
-
-        this.bclass = "";
-        this.gr = "";
-
 
         var dataUnitFilePorperties = {};
         dataUnitFilePorperties.nameXml = "Accounts";
@@ -873,6 +871,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, xmlNode, xmlTagName) {
 
             var rows = [];
+            var _bClass="";
 
             while (xmlNode) { // For each customerSupplierNode
 
@@ -883,7 +882,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 var accountOpening = "";
                 var accountClosing = "";
                 var gr = "";
-                var bclass = "";
+                var bClass = "";
                 var nameprefix = "";
                 var firstname = "";
                 var familyname = "";
@@ -904,8 +903,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 if (xmlNode.hasChildElements('n1:AccountID')) {
                     accountId = xmlNode.firstChildElement('n1:AccountID').text;
                     accountType = this.setAccountType(accountId);
-                    bclass = this.setBClassByAccount(accountId);
-                    gr = this.setCSGrByBclass(bclass);
+                    bClass = this.setBClassByAccount(accountId);
+                    gr = this.setCSGrByBclass(bClass);
                 }
 
                 if (xmlNode.hasChildElements('n1:Name'))
@@ -984,7 +983,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 row.fields = {};
                 row.fields["Account"] = accountNumber;
                 row.fields["Description"] = accountDescription;
-                row.fields["BClass"] = bclass;
+                row.fields["BClass"] = bClass;
                 row.fields["Gr"] = gr;
                 row.fields["Opening"] = accountOpening;
                 row.fields["BalanceFromFile"] = accountOpening;
@@ -1003,18 +1002,12 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
                 rows.push(row);
 
-                this.bClass = bclass;
-
                 xmlNode = xmlNode.nextSiblingElement(xmlTagName); // Next customerSupplier
             }
 
-            //provo a ritornare le righe ed inserirle assieme ai conti normali nel punto giusto
-
-            var secRows = this.getSectionRow(accountType);
+            var secRows = this.getSectionRow(accountType,bClass);
             rows.push(secRows.row);
             rows.push(secRows.emptyRow);
-
-            this.bClass = "";
 
             var dataUnitFilePorperties = {};
             dataUnitFilePorperties.nameXml = "Accounts";
@@ -1089,17 +1082,17 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * @param {*} accType 
      * @returns 
      */
-    getGroupRow(accType) {
+    getGroupRow(accType,gr,bClass) {
         var grRows = {};
-        if (!this.gr)
+        if (!gr)
             return grRows;
         grRows.row = {};
         grRows.row.operation = {};
         grRows.row.operation.name = "add";
         grRows.row.fields = {};
-        grRows.row.fields["Group"] = this.gr;
-        grRows.row.fields["Description"] = this.setGroupDescription();
-        grRows.row.fields["Gr"] = this.setGroupTotal(accType);
+        grRows.row.fields["Group"] = gr;
+        grRows.row.fields["Description"] = this.setGroupDescription(gr);
+        grRows.row.fields["Gr"] = this.setGroupTotal(accType,bClass);
         grRows.emptyRow = this.getEmptyRow();
 
         return grRows;
@@ -1109,10 +1102,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * sets the groups to be reported in the balance
      * @returns 
      */
-    setGroupCarriedOver() {
+    setGroupCarriedOver(gr) {
         var grCarriedOver = {};
-        switch (this.gr) {
-            //verificare di prendere il gruppo corretto
+        switch (gr) {
             case "27":
                 grCarriedOver.gr = "0511"
                 grCarriedOver.description = "ÅRSRESULTAT"
@@ -1134,7 +1126,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             case 2:
                 prefix = ";"
                 return prefix;
-                //aggiungere messaggio di errore    
+                //add errore message when this functionality will be activated
             default:
                 return "Too many CC, max 3 ";
         }
@@ -1145,7 +1137,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * @param {*} grCarriedOver 
      * @returns 
      */
-    getGroupRow_carriedOver(grCarriedOver) {
+    getGroupRow_carriedOver(grCarriedOver,gr) {
         var grRows = {};
         if (grCarriedOver != null) {
             grRows.row = {};
@@ -1154,7 +1146,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             grRows.row.fields = {};
             grRows.row.fields["Group"] = grCarriedOver.gr;
             grRows.row.fields["Description"] = grCarriedOver.description;
-            grRows.row.fields["Gr"] = this.gr;
+            grRows.row.fields["Gr"] = gr;
         }
         return grRows;
     }
@@ -1164,15 +1156,15 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * @param {*} accType 
      * @returns 
      */
-    getSectionRow(accType) {
+    getSectionRow(accType,bClass) {
         var secRows = {};
         secRows.row = {};
         secRows.row.operation = {};
         secRows.row.operation.name = "add";
         secRows.row.fields = {};
-        secRows.row.fields["Group"] = this.setGroupTotal(accType);
-        secRows.row.fields["Description"] = this.SetSectionDescription(this.bClass);
-        secRows.row.fields["Gr"] = this.setSectionGr(accType);
+        secRows.row.fields["Group"] = this.setGroupTotal(accType,bClass);
+        secRows.row.fields["Description"] = this.SetSectionDescription(bClass);
+        secRows.row.fields["Gr"] = this.setSectionGr(accType,bClass);
         //create an empty row to append after the total row
         secRows.emptyRow = this.getEmptyRow();
         return secRows;
@@ -1184,14 +1176,14 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * if it is nota GL type is a customero supplier account.
      * @returns 
      */
-    setGroupTotal(accType) {
+    setGroupTotal(accType,bClass) {
         var groupTotal = "";
 
         if (!accType)
             return groupTotal
 
         if (accType == "GL") { //if it is a general ledger account
-            switch (this.bClass) {
+            switch (bClass) {
                 case "1":
                     groupTotal = "1.1"
                     return groupTotal;
@@ -1214,7 +1206,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     return groupTotal;
             }
         } else { // So if it is a customer or supplier
-            switch (this.bClass) {
+            switch (bClass) {
                 case "1":
                     groupTotal = "DEB"
                     return groupTotal;
@@ -1230,10 +1222,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * @param {*} accType account type, GL (general ledger) indicates an account belonging to the balance sheet or the profit and loss account 
      * @returns 
      */
-    setSectionGr(accType) {
+    setSectionGr(accType,bClass) {
         var sectionTotal = "";
         if (accType == "GL") { //if it is a general ledger account
-            switch (this.bClass) {
+            switch (bClass) {
                 case "1":
                 case "2":
                     sectionTotal = "00"
@@ -1258,10 +1250,10 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * sets the description of the grouping depending on the group
      * @returns the grouping description
      */
-    setGroupDescription() {
+    setGroupDescription(gr) {
         var descr = "";
         //set only the groups that are not signed as free: http://www.eholding.no/regnskap/norsk-standard-kontoplan.htm
-        switch (this.gr) {
+        switch (gr) {
             //Active Groups, Bclass 1.
             case "10":
                 descr = "Immaterielle eiendeler ol. "
@@ -1477,7 +1469,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 descr = "Overføringer og disponeringer"
                 return descr;
             default:
-                return "Total group: " + this.gr;
+                return "Total group: " + gr;
 
         }
     }
@@ -1486,9 +1478,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * sets the description of the section depending on the class
      * @returns the section's description
      */
-    SetSectionDescription() {
+    SetSectionDescription(bClass) {
             var descr = "";
-            switch (this.bClass) {
+            switch (bClass) {
                 case "1":
                     descr = "EIENDELER"
                     return descr;
@@ -1577,20 +1569,20 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             8 Financial income and cost, extra words. Income and cost
         */
 
-        var bclass = "";
+        var bClass = "";
         if (account.substring(0, 1) === "1") {
-            bclass = "1";
+            bClass = "1";
         } else if (account.substring(0, 1) === "2") {
-            bclass = "2";
+            bClass = "2";
         } else if (account.substring(0, 1) === "3") {
-            bclass = "4";
+            bClass = "4";
         } else if (account.substring(0, 1) === "4" || account.substring(0, 1) === "5" || account.substring(0, 1) === "6" || account.substring(0, 1) === "7") {
-            bclass = "3";
+            bClass = "3";
         } else if (account.substring(0, 1) === "8") {
             //bclass 3 or 4
-            bclass = "";
+            bClass = "";
         }
-        return bclass;
+        return bClass;
     }
 
     /**

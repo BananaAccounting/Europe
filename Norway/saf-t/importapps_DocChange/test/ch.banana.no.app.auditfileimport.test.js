@@ -75,7 +75,8 @@ ImportFileSafFileTest.prototype.testDoChange = function() {
             var noAuditFilesImport = new NoAuditFilesImport(banDoc);
             var sourceFiles = [];
             sourceFiles.push(fileContent);
-            noAuditFilesImport.createJsonDocument(sourceFiles);
+            noAuditFilesImport.createJsonDocumentData(sourceFiles);
+            noAuditFilesImport.createJsonDocumentColumns();
             var jsonDoc = { "format": "documentChange", "error": "" };
             jsonDoc["data"] = noAuditFilesImport.jsonDocArray;
 

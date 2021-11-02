@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.no.app.auditfileimport.js
 // @api = 1.0
-// @pubdate = 2021-10-28
+// @pubdate = 2021-11-02
 // @publisher = Banana.ch SA
 // @description = Norway Import Audit File (BETA)
 // @doctype = *
@@ -111,14 +111,16 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             this.checkDebitCredit(this.transTotalCredit, this.transTotalDebit, "transactions");
 
             /*********************************************************************
-             * ADD THE COSTUMERS
+             * ADD THE COSTUMERS AND ADD THE SUPPLIERS
              *********************************************************************/
+            //before add the customers and suppliers we add the base section delimiter, is created separately because they are managed separately
+            //check if costumer or suppliers node are present
+            if(masterFilesNode.hasChildElements('n1:Customers') || masterFilesNode.hasChildElements('n1:Suppliers'))
+                this.addCusSupSectionDelimiter(jsonDoc);
             var customersNode = masterFilesNode.firstChildElement('n1:Customers');
             var customerNode = customersNode.firstChildElement('n1:Customer'); // First customer
             this.createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, customerNode, 'n1:Customer');
-            /*********************************************************************
-             * ADD THE SUPPLIERS
-             *********************************************************************/
+            /**************************************************************************************************/
             var suppliersNode = masterFilesNode.firstChildElement('n1:Suppliers');
             var supplierNode = suppliersNode.firstChildElement('n1:Supplier'); // First supplier
             this.createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, supplierNode, 'n1:Supplier');
@@ -238,6 +240,34 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
 
     }
+    /**
+     * Creates and adds the line to delimit the section of customers and suppliers
+     * @param {*} jsonDoc 
+     */
+    addCusSupSectionDelimiter(jsonDoc){
+        var rows = [];
+        var row = {};
+
+        //delimiter row
+        row.operation = {};
+        row.operation.name = "add";
+        row.fields = {};
+        row.fields["Section"] = "*";
+        row.fields["Description"] = "Kunder og leverandører";
+        rows.push(row);
+
+        //empty  row
+        var emptyRow = this.getEmptyRow();
+        rows.push(emptyRow);
+
+        var dataUnitFilePorperties = {};
+        dataUnitFilePorperties.nameXml = "Accounts";
+        dataUnitFilePorperties.data = {};
+        dataUnitFilePorperties.data.rowLists = [];
+        dataUnitFilePorperties.data.rowLists.push({ "rows": rows });
+
+        jsonDoc.document.dataUnits.push(dataUnitFilePorperties);
+    }
 
     /**
      * retrieves company information from the xml file and saves it
@@ -248,7 +278,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         var companyInfos = [];
         var startDate = "";
-        var endDate = "";
         var endDate = "";
         var basicCurrency = "";
 
@@ -267,15 +296,30 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         if (headerNode.hasChildElements('n1:SelectionCriteria')) {
             var SelectionCriteriaNode = headerNode.firstChildElement('n1:SelectionCriteria');
 
-            if (SelectionCriteriaNode.hasChildElements('n1:SelectionStartDate')) {
+            if (SelectionCriteriaNode.hasChildElements('n1:SelectionStartDate') && SelectionCriteriaNode.hasChildElements('n1:SelectionEndDate') ) {
                 startDate = SelectionCriteriaNode.firstChildElement('n1:SelectionStartDate').text;
                 startDate = startDate.replace(/-/g, "");
-            }
-            if (SelectionCriteriaNode.hasChildElements('n1:SelectionEndDate')) {
+
                 endDate = SelectionCriteriaNode.firstChildElement('n1:SelectionEndDate').text;
                 endDate = endDate.replace(/-/g, "");
-            }
+
+            }/*else if(SelectionCriteriaNode.hasChildElements('n1:SelectionCriteria')){
+                //find period start date //RIPRENDERE DA QUIIIII
+                let periodStartYear = SelectionCriteriaNode.firstChildElement('n1:PeriodStartYear').text;
+                let periodStart = SelectionCriteriaNode.firstChildElement('n1:PeriodStart').text;
+                periodStart--; //because js months are from 0 to 11.
+                let newStartDate = new Date(periodStartYear, periodStart, 1);
+                startDate=Banana.Converter.toInternalDateFormat(newStartDate);
+    
+                //find period end date
+                let periodEndYear = SelectionCriteriaNode.firstChildElement('n1:PeriodEndYear').text;
+                let periodEnd = SelectionCriteriaNode.firstChildElement('n1:PeriodEnd').text;
+                periodEnd--;
+                let nweEndDate= new Date(periodEndYear, periodEnd, 30);
+                endDate=Banana.Converter.toInternalDateFormat(nweEndDate);
+            }*/
         }
+
 
         basicCurrency = headerNode.firstChildElement('n1:DefaultCurrencyCode').text;
 
@@ -714,6 +758,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         var rows = [];
         var GeneralLedgerAccountsNode = "";
         var accountNode = "";
+        var sectionsDelimitercounter=0;
+        var _sectionType="";
         var _gr="";
         var _accType="";
         var _bClass="";
@@ -727,6 +773,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             var accountDescription = "";
             var accType = "";
             var gr = "";
+            var sectionType="";
             var bClass = "";
             var totalGr = "";
             var opening = "";
@@ -799,11 +846,31 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 rows.push(grRows.emptyRow);
             }
 
+            //ogni volta che cambia la classe definisco il sectiontype, ovvero a che sezione appartiene il conto, lo faccio per poter creare le sezioni di base.
+            //possibilità--> Bilancio o Conto Economico
+            sectionType=this.getSectionType(accountNumber);
+
             if (_bClass != bClass) {
-                var secRows = this.getSectionRow(_accType,_bClass);
+                if(sectionsDelimitercounter!=0){
+                    var secRows = this.getSectionRow(_accType,_bClass);
+                    rows.push(secRows.row);
+                    rows.push(secRows.emptyRow);
+                }
+
+                if(_sectionType!=sectionType){
+                    var secRows = this.setBaseSectionDelimiterRow(sectionType);
+                    rows.push(secRows.row);
+                    rows.push(secRows.emptyRow);
+                }
+
+                var secRows = this.setSectionDelimiterRow(bClass,accType);
                 rows.push(secRows.row);
                 rows.push(secRows.emptyRow);
+
+                //everytime the class change, set again the counter to zero.
+                sectionsDelimitercounter=0;
             }
+            
 
 
             var row = {};
@@ -824,6 +891,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
             _gr = gr;
             _bClass = bClass;
             _accType = accType;
+            _sectionType=sectionType;
+            sectionsDelimitercounter++,
 
 
             accountNode = accountNode.nextSiblingElement('n1:Account');
@@ -871,7 +940,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
     createJsonDocument_AddCustomersSupplier(jsonDoc, srcFileName, xmlNode, xmlTagName) {
 
             var rows = [];
-            var _bClass="";
+            var firstLoop=true;
 
             while (xmlNode) { // For each customerSupplierNode
 
@@ -975,6 +1044,13 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     }
                 }
 
+                //Create the base section delimiter only at the beginning
+                if(firstLoop){
+                    var secRows = this.setSectionDelimiterRow(bClass,accountType);
+                    rows.push(secRows.row);
+                    rows.push(secRows.emptyRow);
+                }
+
 
                 var row = {};
                 row.operation = {};
@@ -1001,6 +1077,8 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 row.fields["BankIban"] = bankiban;
 
                 rows.push(row);
+
+                firstLoop=false;
 
                 xmlNode = xmlNode.nextSiblingElement(xmlTagName); // Next customerSupplier
             }
@@ -1032,6 +1110,27 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         else if (accountId.substr(0, 1) == "1")
             accType = "DEB";
         return accType
+    }
+
+    getSectionType(accountNumber){
+        var sectionType="";
+        accountNumber=accountNumber.substr(0,1);
+        switch(accountNumber){
+            case"1":
+            case"2":
+                sectionType="B" //Balance
+                return sectionType;
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+                sectionType="P"//Profit and Loss
+                return sectionType;
+            default:
+                return sectionType;
+        }
     }
 
     /**
@@ -1076,6 +1175,76 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         return row;
     }
+
+    /**
+     * Add the row that define the begin of the section
+     * Section ref: Assets=1, Liabilities=2, Costs=3, Revenues=4
+     * @param {*} bClass 
+     * @param {*} accType 
+     * @returns the section delemiter row
+     */
+
+    setSectionDelimiterRow(bClass,accType){
+        //section
+        //costumers and suppliers sections are 1 and 2, for the delimiter of section we want to have 01 and 02
+        let refClass=bClass;
+        if(accType != "GL"){
+            refClass="0"+bClass;
+        }
+        var sectionDelimiterRows = {};
+        sectionDelimiterRows.row = {};
+        sectionDelimiterRows.row.operation = {};
+        sectionDelimiterRows.row.operation.name = "add";
+        sectionDelimiterRows.row.fields = {};
+        sectionDelimiterRows.row.fields["Section"] = refClass;
+        sectionDelimiterRows.row.fields["Description"] = this.setSectionDescription(bClass,accType);
+        sectionDelimiterRows.emptyRow = this.getEmptyRow();
+
+        return sectionDelimiterRows;
+    }
+
+    /**
+     * Add the row that define the begin of the base section: Balance, Profit and Loss, Customers and suppliers, Cost centers.
+     * @param {*} bClass 
+     * @param {*} accType 
+     * @returns 
+     */
+    setBaseSectionDelimiterRow(accType){
+        //section
+        var sectionDelimiterRows = {};
+        sectionDelimiterRows.row = {};
+        sectionDelimiterRows.row.operation = {};
+        sectionDelimiterRows.row.operation.name = "add";
+        sectionDelimiterRows.row.fields = {};
+        sectionDelimiterRows.row.fields["Section"] = "*";
+        sectionDelimiterRows.row.fields["Description"] = this.setBaseSectionDescription(accType);
+        sectionDelimiterRows.emptyRow = this.getEmptyRow();
+
+        return sectionDelimiterRows;
+    }
+
+        /**
+     * Returns the description of the basic section, based on the account type 
+     * @param {*} accType 
+     * @returns 
+     */
+         setBaseSectionDescription(accType) {
+            var descr = "";
+                switch (accType) {
+                    case "B":
+                        descr = "BALANCE"
+                        return descr;
+                    case "P":
+                        descr = "WINST- EN VERLIESREKENING"
+                        return descr;
+                    case "S":
+                    case "C":
+                        descr = "KLANTEN EN LEVERANCIERS"
+                        return descr;
+                    default:
+                        return descr;
+                }
+        }
 
     /**
      * creates a grouping row 
@@ -1163,7 +1332,7 @@ var NoAuditFilesImport = class NoAuditFilesImport {
         secRows.row.operation.name = "add";
         secRows.row.fields = {};
         secRows.row.fields["Group"] = this.setGroupTotal(accType,bClass);
-        secRows.row.fields["Description"] = this.SetSectionDescription(bClass);
+        secRows.row.fields["Description"] = this.setSectionDescription(bClass,accType);
         secRows.row.fields["Gr"] = this.setSectionGr(accType,bClass);
         //create an empty row to append after the total row
         secRows.emptyRow = this.getEmptyRow();
@@ -1478,8 +1647,9 @@ var NoAuditFilesImport = class NoAuditFilesImport {
      * sets the description of the section depending on the class
      * @returns the section's description
      */
-    SetSectionDescription(bClass) {
-            var descr = "";
+    setSectionDescription(bClass,accType) {
+        var descr = "";
+        if(accType=="GL"){
             switch (bClass) {
                 case "1":
                     descr = "EIENDELER"
@@ -1494,15 +1664,23 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 case "5":
                 case "6":
                 case "7":
-                    descr = "DRIFTSKOSTNAD"
-                    return descr;
                 case "8":
-                    descr = "FINANSINNTEKT OF -KOSTNAD, EKSTRAORINAER INNTEKT OG -KOSTNAD OG SKATT"
+                    descr = "DRIFTSKOSTNAD"
                     return descr;
                 default:
                     return descr;
             }
+        }else if(accType=="CRE" || accType=="DEB"){
+            switch (bClass) {
+                case "1":
+                    descr = "KUNDER"
+                    return descr;
+                case "2":
+                    descr = "LEVERANDORER"
+                    return descr;
+            }
         }
+    }
 
     /**
      * creates the line for the profit and loss account result

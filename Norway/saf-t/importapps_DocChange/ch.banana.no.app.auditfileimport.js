@@ -303,21 +303,30 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                 endDate = SelectionCriteriaNode.firstChildElement('n1:SelectionEndDate').text;
                 endDate = endDate.replace(/-/g, "");
 
-            }/*else if(SelectionCriteriaNode.hasChildElements('n1:SelectionCriteria')){
-                //find period start date //RIPRENDERE DA QUIIIII
-                let periodStartYear = SelectionCriteriaNode.firstChildElement('n1:PeriodStartYear').text;
-                let periodStart = SelectionCriteriaNode.firstChildElement('n1:PeriodStart').text;
-                periodStart--; //because js months are from 0 to 11.
-                let newStartDate = new Date(periodStartYear, periodStart, 1);
-                startDate=Banana.Converter.toInternalDateFormat(newStartDate);
-    
-                //find period end date
-                let periodEndYear = SelectionCriteriaNode.firstChildElement('n1:PeriodEndYear').text;
-                let periodEnd = SelectionCriteriaNode.firstChildElement('n1:PeriodEnd').text;
-                periodEnd--;
-                let nweEndDate= new Date(periodEndYear, periodEnd, 30);
-                endDate=Banana.Converter.toInternalDateFormat(nweEndDate);
-            }*/
+                Banana.console.debug(startDate+" / "+endDate);
+
+            }else if(SelectionCriteriaNode.hasChildElements('n1:PeriodStartYear')
+                    && SelectionCriteriaNode.hasChildElements('n1:PeriodStart')
+                    && SelectionCriteriaNode.hasChildElements('n1:PeriodEndYear')
+                    && SelectionCriteriaNode.hasChildElements('n1:PeriodEnd')){
+
+                        //find period start date //RIPRENDERE DA QUIIIII
+                        let periodStartYear = SelectionCriteriaNode.firstChildElement('n1:PeriodStartYear').text;
+                        let periodStart = SelectionCriteriaNode.firstChildElement('n1:PeriodStart').text;
+                        periodStart--; //because js months are from 0 to 11.
+                        let newStartDate = new Date(periodStartYear, periodStart, 1);
+                        startDate=Banana.Converter.toInternalDateFormat(newStartDate);
+                        startDate = startDate.replace(/-/g, "");
+            
+                        //find period end date
+                        let periodEndYear = SelectionCriteriaNode.firstChildElement('n1:PeriodEndYear').text;
+                        let periodEnd = SelectionCriteriaNode.firstChildElement('n1:PeriodEnd').text;
+                        periodEnd--;
+                        let monthDays=this.getMonthDays(periodEnd);
+                        let newEndDate= new Date(periodEndYear, periodEnd, monthDays);
+                        endDate=Banana.Converter.toInternalDateFormat(newEndDate);
+                        endDate = endDate.replace(/-/g, "");
+            }
         }
 
 
@@ -362,6 +371,33 @@ var NoAuditFilesImport = class NoAuditFilesImport {
 
         return companyInfos;
     }
+
+    getMonthDays(month){
+        let days="";
+        switch(month){
+            //jan,mar,may,jul,aug,oct,dec
+            case 0:
+            case 2:
+            case 4:
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+                days="31";
+                return days;
+            //feb
+            case 1:
+                days="29";
+                return days;
+            //feb,apr,june,sept,nov
+            case 3:
+            case 5:
+            case 8:
+            case 10:
+                days="30";
+                return days;  
+        }
+    };
 
     /**
      * sets the fields to be modified in the file header
@@ -831,7 +867,6 @@ var NoAuditFilesImport = class NoAuditFilesImport {
                     }
                     this.closingCreditBalance = Banana.SDecimal.add(this.closingCreditBalance, closing);
                 }
-                closing=Banana.SDecimal.round(closing,{'decimals': 2});
             }
 
             //if the group change, we create a grouping row, same with the bclass

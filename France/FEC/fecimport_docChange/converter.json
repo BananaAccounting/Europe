@@ -1,0 +1,12 @@
+{
+    "country": "france",
+    "countryCode": "fr",
+    "description": "Import FEC Files with Document Change",
+    "docUri": "",
+    "fileExtension": "csv",
+    "mimeType": "text/csv",
+    "script": {
+        "function": "exec",
+        "uri": "creator.js"
+    }
+}

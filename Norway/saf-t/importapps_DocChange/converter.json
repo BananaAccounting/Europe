@@ -1,0 +1,16 @@
+{
+    "country": "norway",
+    "countryCode": "no",
+    "description": "Import Audit File Document Change (NO)",
+    "docUri": "",
+    "fileExtension": "xml",
+    "mimeType": "text/xml",
+    "script": {
+        "function": "exec",
+        "uri": "creator.js"
+    },
+    "xml": {
+        "namespace": "urn:StandardAuditFile-Taxation-Financial:NO",
+        "rootItem": "AuditFile"
+    }
+}

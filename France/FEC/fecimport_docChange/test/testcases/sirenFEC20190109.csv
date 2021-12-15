@@ -1,0 +1,14 @@
+JournalCode	JournalLib	EcritureNum	EcritureDate	CompteNum	CompteLib	CompAuxNum	CompAuxLib	PieceRef	PieceDate	EcritureLib	Debit	Credit	EcritureLet	DateLet	ValidDate	Montantdevise	Idevise
+base	Transactions	3	20190105	615560	Matériel de bureau			1	20190105	Achat matériel de bureau	80.00				20190105	80.00	EUR
+base	Transactions	3	20190105	531100	Caisse			1	20190105	Achat matériel de bureau		80.00			20190105	-80.00	EUR
+base	Transactions	4	20190106	531100	Caisse			2	20190106	Vente au comptant	8000.00				20190106	8000.00	EUR
+base	Transactions	4	20190106	701000	Ventes de produits finis			2	20190106	Vente au comptant		8000.00			20190106	-8000.00	EUR
+base	Transactions	5	20190201	512100	Compte courant bancaire			3	20190201	Paiement loyer et charges locatives		5000.00			20190201	-5000.00	EUR
+base	Transactions	5	20190201	613000	Loyer			3	20190201	Loyer	4000.00				20190201	4000.00	EUR
+base	Transactions	5	20190201	614000	Charges locatives et de copropriété			3	20190201	Charges locatives et de copropriété	1000.00				20190201	1000.00	EUR
+base	Transactions	8	20190301	607000	Achats de marchandises			4	20190301	Achats de marchandises	600.00				20190301	600.00	EUR
+base	Transactions	8	20190301	512100	Compte courant bancaire			4	20190301	Achats de marchandises		600.00			20190301	-600.00	EUR
+base	Transactions	9	20190402	514000	Compte courant postal			5	20190402	Variation des stocks 	200.00				20190402	200.00	EUR
+base	Transactions	9	20190402	713000	Variation des stocks 			5	20190402	Variation des stocks 		200.00			20190402	-200.00	EUR
+base	Transactions	10	20190402	512101	Test 1 			5	20190402	Test: Account 1		201.00			20190402	-201.00	EUR
+base	Transactions	11	20190402	701001	Test 2 			5	20190402	Test: Account 2		202.00			20190402	-202.00	EUR

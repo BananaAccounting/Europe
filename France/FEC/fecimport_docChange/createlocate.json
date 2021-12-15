@@ -1,0 +1,14 @@
+{
+    "country": "France",
+    "countryCode": "fr",
+    "description": "[BETA] Import FEC File France (csv)",
+    "docUri": "",
+    "fileExtension": "csv",
+    "mimeType": "text/csv",
+    "script": {
+        "function": "exec",
+        "uri": "ch.banana.fr.app.fecfileimport.sbaa/createinit.js"
+    },
+    "type": "text/json",
+    "version": "1.0"
+}

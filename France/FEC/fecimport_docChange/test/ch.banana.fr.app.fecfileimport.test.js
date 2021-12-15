@@ -1,4 +1,4 @@
-// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,51 +14,48 @@
 //
 
 
-// @id = ch.banana.fr.app.fecimportaccounts.test
+// @id = ch.banana.fr.app.fecfileimport.test
 // @api = 1.0
-// @pubdate = 2019-01-14
+// @pubdate = 2021-10-22
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.fr.app.fecimportaccounts.js>
+// @description = <TEST ch.banana.fr.app.fecfileimport.test.js>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../ch.banana.fr.app.fecimportaccounts.js
+// @includejs = ../ch.banana.fr.app.fecfileimport.js
 // @timeout = -1
 
-
-var texts;
-
 // Register test case to be executed
-Test.registerTestCase(new ImportAccountsTest());
+Test.registerTestCase(new ImportFecFileTest());
 
 // Here we define the class, the name of the class is not important
-function ImportAccountsTest() {
+function ImportFecFileTest() {
 
 }
 
 // This method will be called at the beginning of the test case
-ImportAccountsTest.prototype.initTestCase = function() {
+ImportFecFileTest.prototype.initTestCase = function() {
 
 }
 
 // This method will be called at the end of the test case
-ImportAccountsTest.prototype.cleanupTestCase = function() {
+ImportFecFileTest.prototype.cleanupTestCase = function() {
 
 }
 
 // This method will be called before every test method is executed
-ImportAccountsTest.prototype.init = function() {
+ImportFecFileTest.prototype.init = function() {
 
 }
 
 // This method will be called after every test method is executed
-ImportAccountsTest.prototype.cleanup = function() {
+ImportFecFileTest.prototype.cleanup = function() {
 
 }
 
-ImportAccountsTest.prototype.testBananaApps = function() {
+ImportFecFileTest.prototype.testTransactionsImport = function() {
 
     var file = Banana.IO.getLocalFile("file:script/../test/testcases/sirenFEC20190109.txt");
     var stringifyFile = JSON.stringify(file.read(), "", "");
@@ -66,15 +63,28 @@ ImportAccountsTest.prototype.testBananaApps = function() {
     Test.logger.addCsv("----INITIAL TXT FILE----", parsedFile);
 
     var csvFile = Banana.Converter.csvToArray(parsedFile, '\t', '');
-    Banana.console.debug(csvFile.length);
     Test.logger.addText("----CONVERSION TXT TO ARRAY----");
     Test.logger.addText(csvFile);
 
-    var form = [];
-    loadForm(csvFile, form);
-    var importAccountsFile = createImportAccountsFile(form);
-    Test.logger.addText("------IMPORT ACCOUNTS FILE------");
-    Test.logger.addText(importAccountsFile);
+
+    /**
+     * Should add:
+     *  . 2 new Accounts-->"512101","701001"
+     *  . 9 transactions rows.
+     */
+    var fileAC2="file:script/../test/testcases/exemple_cd_entreprise.ac2";
+    var banDoc = Banana.application.openDocument(fileAC2);
+    if (banDoc) {
+    var fec_import = new FrAuditFilesImport(banDoc);
+    fec_import.createJsonDocument(csvFile);
+    var jsonDoc = { "format": "documentChange", "error": "" };
+    jsonDoc["data"] = fec_import.jsonDocArray;
+
+    Test.logger.addText("----IMPORT TRANSACTIONS WITH DOCUMENT CHANGE STRUCTURE----");
+    Test.logger.addJson("name", JSON.stringify(jsonDoc));
+    }  else {
+        Test.logger.addFatalError("File not found: " + fileAC2);
+    }
 
 }
 

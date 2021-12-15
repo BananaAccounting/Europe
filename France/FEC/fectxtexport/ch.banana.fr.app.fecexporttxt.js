@@ -1,4 +1,4 @@
-// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.fr.app.fecexporttxt.js
 // @api = 1.0
-// @pubdate = 2019-01-22
+// @pubdate = 2021-11-03
 // @publisher = Banana.ch SA
 // @description = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
 // @description.fr = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
@@ -23,6 +23,7 @@
 // @task = export.file
 // @exportfilename = sirenFEC<Date>
 // @exportfiletype = txt
+// @timeout = -1
 
 
 /*

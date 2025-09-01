@@ -115,13 +115,16 @@ function SGLaydernierFormat1() {
   this.convert = function (transactionsData) {
     var transactionsToImport = [];
 
-    for (var i = 0; i < transactionsData.length; i++) {
+    // First, consolidate multi-row descriptions
+    var consolidatedData = this.consolidateMultiRowDescriptions(transactionsData);
+
+    for (var i = 0; i < consolidatedData.length; i++) {
       if (
-        transactionsData[i]["Date"] &&
-        transactionsData[i]["Date"].length >= 10 &&
-        transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/)
+        consolidatedData[i]["Date"] &&
+        consolidatedData[i]["Date"].length >= 10 &&
+        consolidatedData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/)
       ) {
-        transactionsToImport.push(this.mapTransaction(transactionsData[i]));
+        transactionsToImport.push(this.mapTransaction(consolidatedData[i]));
       }
     }
 
@@ -141,6 +144,46 @@ function SGLaydernierFormat1() {
       ],
     ];
     return header.concat(transactionsToImport);
+  };
+
+  this.consolidateMultiRowDescriptions = function (transactionsData) {
+    var consolidatedData = [];
+    
+    for (var i = 0; i < transactionsData.length; i++) {
+      var transaction = transactionsData[i];
+      
+      // Check if this is a main transaction row (has a date)
+      if (transaction["Date"] && transaction["Date"].length >= 10 && 
+          transaction["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        
+        var consolidatedTransaction = Object.assign({}, transaction);
+        var descriptions = [transaction["Description"] || ""];
+        
+        // Look ahead for continuation rows (empty date but has description)
+        var j = i + 1;
+        while (j < transactionsData.length) {
+          var nextRow = transactionsData[j];
+          
+          // Check if this is a continuation row (empty date but has description)
+          if ((!nextRow["Date"] || nextRow["Date"].trim() === "") && 
+              nextRow["Description"] && nextRow["Description"].trim() !== "") {
+            descriptions.push(nextRow["Description"].trim());
+            j++;
+          } else {
+            break;
+          }
+        }
+        
+        // Consolidate all descriptions with space separation
+        consolidatedTransaction["Description"] = descriptions.join(" ");
+        consolidatedData.push(consolidatedTransaction);
+        
+        // Skip the processed continuation rows
+        i = j - 1;
+      }
+    }
+    
+    return consolidatedData;
   };
 
   this.getFormattedData = function (inData, importUtilities) {

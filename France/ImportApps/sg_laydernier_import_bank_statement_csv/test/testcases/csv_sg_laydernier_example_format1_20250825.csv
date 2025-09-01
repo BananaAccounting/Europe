@@ -1,0 +1,18 @@
+"SG DASSAULT-GARNIER      "
+"AB76 1234 5678 9012 1234 5678 123";"Compte Courant"
+"ABC DEFG"
+"Solde au";"08/08/2025"
+"Solde";"2 275,29";"ABC"
+
+Date;Nature de l'opération;Débit;Crédit;Devise;Date de valeur;Libellé interbancaire
+"17/02/2025";"VAT TRACE    1234567890S";"";"115,00";"EUR";"17/02/2025";"TEST TEST TEST"
+"";"DI: JEAN JEAN";"";"";"";"";""
+"";"MART: description test test";"";"";"";"";""
+"";"TU: test test";"";"";"";"";""
+"17/02/2025";"KART X1234 14/02 TEST";"-90,00";"";"EUR";"17/02/2025";"TEST TEST TEST"
+"21/02/2025";"KART X1234 20/02 TEST DE TEST";"-150,00";"";"EUR";"21/02/2025";"TEST TEST TEST"
+"22/02/2025";"VAR TEST TE 1234567890";"";"115,00";"EUR";"22/02/2025";""
+"";"DI: MISTER TEST CASH TEST";"";"";"";"";""
+"";"DATUM: 22/02/2025 19:08";"";"";"";"";""
+"";"MART: description test test test";"";"";"";"";""
+"";"TU: test test";"";"";"";"";""

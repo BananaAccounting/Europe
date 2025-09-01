@@ -1,0 +1,19 @@
+{
+    "category": "import",
+    "country": "europe",
+    "countryCode": "eu",
+    "description": "SG Laydernier - Import account statement .csv (Banana+ Advanced)",
+    "description.en": "SG Laydernier - Import account statement .csv (Banana+ Advanced)",
+    "description.de": "SG Laydernier - Bewegungen importieren .csv (Banana+ Advanced)",
+    "description.fr": "SG Laydernier - Importer mouvements .csv (Banana+ Advanced)",
+    "description.it": "SG Laydernier - Importa movimenti .csv (Banana+ Advanced)",
+    "id": "ch.banana.europe.import.sglaydernier",
+    "language": "en",
+    "publisher": "Banana.ch",
+    "title": "SG Laydernier - Import account statement .csv (Banana+ Advanced)",
+    "title.en": "SG Laydernier - Import account statement .csv (Banana+ Advanced)",
+    "title.de": "SG Laydernier - Bewegungen importieren .csv (Banana+ Advanced)",
+    "title.fr": "SG Laydernier - Importer mouvements .csv (Banana+ Advanced)",
+    "title.it": "SG Laydernier - Importa movimenti .csv (Banana+ Advanced)",
+    "version": "1.0"
+}

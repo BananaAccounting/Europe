@@ -3,3 +3,9 @@
 *.DS_Store
 **/test/testresults
 ~$*
+*.test.diff.txt
+**/build-*/
+VatEU
+*.user
+**/build/
+**/.vscode/

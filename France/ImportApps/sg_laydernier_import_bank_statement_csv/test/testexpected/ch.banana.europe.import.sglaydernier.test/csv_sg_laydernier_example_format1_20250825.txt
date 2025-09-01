@@ -1,0 +1,29 @@
+%%info_test_name{csv_sg_laydernier_example_format1_20250825}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l  l  l  l }
+Date & DateValue & Doc & ExternalReference & Description & Income & Expenses\\
+2025-02-22 & 2025-02-22 &  &  & VAR TEST TE 1234567890 DI: MISTER TEST CASH TEST DATUM: 22/02/2025 19:08 MART: description test test test TU: test test;  & 115.00 & \\
+2025-02-21 & 2025-02-21 &  &  & KART X1234 20/02 TEST DE TEST; TEST TEST TEST &  & 150.00\\
+2025-02-17 & 2025-02-17 &  &  & KART X1234 14/02 TEST; TEST TEST TEST &  & 90.00\\
+2025-02-17 & 2025-02-17 &  &  & VAT TRACE    1234567890S DI: JEAN JEAN MART: description test test TU: test test; TEST TEST TEST & 115.00 & \\
+\\
+\end{tablevalue}
+\end{document}

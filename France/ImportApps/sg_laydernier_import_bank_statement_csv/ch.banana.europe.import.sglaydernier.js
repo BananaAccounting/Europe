@@ -208,9 +208,9 @@ function SGLaydernierFormat1() {
     let mappedLine = [];
 
     mappedLine.push(
-      Banana.Converter.toInternalDateFormat(transaction["Date"], "dd.mm.yyyy")
+      Banana.Converter.toInternalDateFormat(transaction["Date"], "dd/mm/yyyy")
     );
-    mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["ValueDate"], "dd.mm.yyyy"));
+    mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["ValueDate"], "dd/mm/yyyy"));
     mappedLine.push("");
     mappedLine.push("");
     mappedLine.push(transaction["Description"] + "; " + transaction["InterbankLabel"]);

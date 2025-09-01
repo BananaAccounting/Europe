@@ -24,8 +24,8 @@
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../ch.banana.europe.import.sglaydernier/import.utilities.js
-// @includejs = ../ch.banana.europe.import.sglaydernier/ch.banana.europe.import.sglaydernier.js
+// @includejs = ../ch.banana.europe.import.sglaydernier.sbaa/import.utilities.js
+// @includejs = ../ch.banana.europe.import.sglaydernier.sbaa/ch.banana.europe.import.sglaydernier.js
 // @timeout = -1
 
 // Register test case to be executed

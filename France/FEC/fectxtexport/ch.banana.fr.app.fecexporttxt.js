@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.fr.app.fecexporttxt.js
 // @api = 1.0
-// @pubdate = 2021-11-03
+// @pubdate = 2026-09-22
 // @publisher = Banana.ch SA
 // @description = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
 // @description.fr = Fichiers des écritures comptables (FEC) - Exportation des mouvements (fichier de texte *.txt)
@@ -104,9 +104,13 @@ function getDataType1(banDoc, startDate, endDate) {
     for (var i = 0; i < len; i++) {
         var tRow = journal.row(i);
 
-        //From the journal we take only transactions rows between the period
+        var amountSign = Banana.SDecimal.sign(tRow.value('JAmount'));
+
+        //From the journal we take only transactions rows between the period,
+        //ignoring rows with an empty or zero amount (amountSign is neither 1 nor -1)
         if (tRow.value('JOperationType') == banDoc.OPERATIONTYPE_TRANSACTION 
-            && tRow.value('JDate') >= startDate && tRow.value('JDate') <= endDate) {
+            && tRow.value('JDate') >= startDate && tRow.value('JDate') <= endDate
+            && (amountSign == 1 || amountSign == -1)) {
 
             txtFile += 'base\t';
             txtFile += 'Transactions\t';
@@ -122,22 +126,30 @@ function getDataType1(banDoc, startDate, endDate) {
 
             // Amount: debit(positive), credit(negative)
             if (Banana.SDecimal.sign(tRow.value('JAmount')) == 1) {
-                txtFile += tRow.value('JAmount') + '\t';
+                txtFile += formatAmount(tRow.value('JAmount')) + '\t';
                 txtFile += '\t';
             }
             else if (Banana.SDecimal.sign(tRow.value('JAmount')) == -1) {
                 txtFile += '\t';
-                txtFile += Banana.SDecimal.abs(tRow.value('JAmount')) + '\t';
+                txtFile += formatAmount(Banana.SDecimal.abs(tRow.value('JAmount'))) + '\t';
             }
 
             txtFile += '\t';
             txtFile += '\t';
             txtFile += formatDate(Banana.Converter.toDate(tRow.value('JDate'))) +'\t';
-            txtFile += tRow.value('JAmountTransactionCurrency') +'\t';
+            txtFile += formatAmount(tRow.value('JAmountTransactionCurrency')) +'\t';
             txtFile += tRow.value('JTransactionCurrency') +'\n';
         }
     }
     return txtFile;
+}
+
+/* Function that formats an amount replacing the decimal point with a comma */
+function formatAmount(amount) {
+    if (!amount) {
+        return amount;
+    }
+    return ('' + amount).replace('.', ',');
 }
 
 /* Function that format the date YYYYMMDD */
